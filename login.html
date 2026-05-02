@@ -532,46 +532,17 @@
     </div>
   </div>
 
-  <script src="db.js">
-    // Database API calls
-    async function fetchDatabase() {
-      try {
-        const response = await fetch('/api/database');
-        return await response.json();
-      } catch (error) {
-        console.error('Failed to fetch database:', error);
-        return null;
-      }
-    }
-
-    async function saveDatabase(DB) {
-      try {
-        await fetch('/api/database', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(DB)
-        });
-      } catch (error) {
-        console.error('Failed to save database:', error);
-      }
-    }
-
+  <script src="db.js"></script>
+  <script>
     let DB = null;
     let selectedRole = '';
-
+  
     // Load database on page load
     (async function() {
-      DB = await fetchDatabase();
-      if (!DB) {
-        // Load from localStorage as fallback
-        const stored = localStorage.getItem('physioDatabase');
-        if (stored) {
-          DB = JSON.parse(stored);
-        }
-      }
-      console.log('Database loaded:', DB ? Object.keys(DB) : 'null');
+      DB = await loadDB();
+      console.log('Database loaded');
     })();
-
+  
     function switchTab(tab) {
       document.getElementById('loginTab').classList.toggle('active', tab === 'login');
       document.getElementById('registerTab').classList.toggle('active', tab === 'register');
@@ -580,40 +551,63 @@
       document.getElementById('loginMessage').style.display = 'none';
       document.getElementById('registerMessage').style.display = 'none';
     }
-
+  
     function selectRole(role) {
       selectedRole = role;
       document.getElementById('regRole').value = role;
       document.querySelectorAll('.role-card').forEach(card => card.classList.remove('selected'));
-      document.getElementById(role + 'RoleCard').classList.add('selected');
-      document.getElementById('doctorFields').classList.toggle('show', role === 'doctor');
+      const roleCard = document.getElementById(role + 'RoleCard');
+      if (roleCard) roleCard.classList.add('selected');
+      const doctorFields = document.getElementById('doctorFields');
+      if (doctorFields) doctorFields.classList.toggle('show', role === 'doctor');
     }
-
+  
     async function handleLogin(event) {
       event.preventDefault();
       const email = document.getElementById('loginEmail').value.trim();
       const password = document.getElementById('loginPassword').value.trim();
       const role = document.getElementById('loginRole').value;
+      const messageEl = document.getElementById('loginMessage');
+      
+      if (!email || !password || !role) {
+        showMessage(messageEl, 'Please fill all fields.', 'error');
+        return;
+      }
+      
+      // Ensure DB is loaded
+      if (!DB) DB = await loadDB();
       
       // Try API first
-      const result = await loginViaAPI(email, password, role);
-      
-      if (result.success) {
-        localStorage.setItem('physioLoggedInUser', JSON.stringify(result.user));
-        window.location.href = 'dashboard.html';
-      } else {
-        // Fallback to local
-        const DB = loadDB();
-        const user = DB.users.find(u => u.email === email && u.password === password && u.role === role);
-        if (user) {
-          localStorage.setItem('physioLoggedInUser', JSON.stringify(user));
-          window.location.href = 'dashboard.html';
-        } else {
-          showMessage(messageEl, 'Invalid credentials', 'error');
+      try {
+        const response = await fetch('https://the-good-physio-server.onrender.com/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password, role })
+        });
+        const result = await response.json();
+        
+        if (result.success) {
+          localStorage.setItem('physioLoggedInUser', JSON.stringify(result.user));
+          showMessage(messageEl, '✓ Login successful! Redirecting...', 'success');
+          setTimeout(() => { window.location.href = 'dashboard.html'; }, 500);
+          return;
         }
+      } catch (error) {
+        console.log('API unavailable, trying local login');
+      }
+      
+      // Fallback to local database
+      const user = DB.users.find(u => u.email === email && u.password === password && u.role === role);
+      
+      if (user) {
+        localStorage.setItem('physioLoggedInUser', JSON.stringify(user));
+        showMessage(messageEl, '✓ Login successful! Redirecting...', 'success');
+        setTimeout(() => { window.location.href = 'dashboard.html'; }, 500);
+      } else {
+        showMessage(messageEl, '❌ Invalid credentials or role. Please try again.', 'error');
       }
     }
-
+  
     async function handleRegister(event) {
       event.preventDefault();
       const role = document.getElementById('regRole').value;
@@ -621,18 +615,14 @@
       const password = document.getElementById('regPassword').value.trim();
       const messageEl = document.getElementById('registerMessage');
       
-      if (!role) { showMessage(messageEl, 'Please select a role.', 'error'); return; }
+      if (!role) { showMessage(messageEl, 'Please select a role (Patient or Doctor).', 'error'); return; }
+      if (!email || !password) { showMessage(messageEl, 'Please fill all required fields.', 'error'); return; }
+      if (password.length < 6) { showMessage(messageEl, 'Password must be at least 6 characters.', 'error'); return; }
       
-      if (!DB) {
-        DB = await fetchDatabase();
-      }
+      if (!DB) DB = await loadDB();
       
-      if (!DB || !DB.users) {
-        showMessage(messageEl, 'Database not loaded. Please refresh.', 'error');
-        return;
-      }
-      
-      if (DB.users.find(u => u.email === email && email !== '')) {
+      // Check if email exists locally
+      if (DB.users.find(u => u.email === email)) {
         showMessage(messageEl, 'An account with this email already exists.', 'error');
         return;
       }
@@ -643,47 +633,59 @@
       const newUser = {
         id: prefix + idNumber,
         email, password, role,
-        surname: document.getElementById('regSurname').value.trim(),
-        firstname: document.getElementById('regFirstname').value.trim(),
-        middlename: document.getElementById('regMiddlename').value.trim(),
-        age: document.getElementById('regAge').value,
-        birthdate: document.getElementById('regBirthdate').value,
-        address: document.getElementById('regAddress').value.trim(),
-        phone: document.getElementById('regPhone').value.trim(),
-        sex: document.getElementById('regSex').value,
-        occupation: document.getElementById('regOccupation').value.trim(),
+        surname: document.getElementById('regSurname')?.value?.trim() || '',
+        firstname: document.getElementById('regFirstname')?.value?.trim() || '',
+        middlename: document.getElementById('regMiddlename')?.value?.trim() || '',
+        age: document.getElementById('regAge')?.value || '',
+        birthdate: document.getElementById('regBirthdate')?.value || '',
+        address: document.getElementById('regAddress')?.value?.trim() || '',
+        phone: document.getElementById('regPhone')?.value?.trim() || '',
+        sex: document.getElementById('regSex')?.value || '',
+        occupation: document.getElementById('regOccupation')?.value?.trim() || '',
         emergencyContact: {
-          name: document.getElementById('regEmergName').value.trim(),
-          phone: document.getElementById('regEmergPhone').value.trim(),
-          relationship: document.getElementById('regEmergRelationship').value
+          name: document.getElementById('regEmergName')?.value?.trim() || '',
+          phone: document.getElementById('regEmergPhone')?.value?.trim() || '',
+          relationship: document.getElementById('regEmergRelationship')?.value || ''
         },
         medicalHistory: [],
         created: new Date().toISOString().split('T')[0]
       };
       
+      // Build display name
       newUser.name = [newUser.firstname, newUser.middlename, newUser.surname].filter(Boolean).join(' ');
       
       if (role === 'doctor') {
-        newUser.specialization = document.getElementById('docSpecialization').value.trim();
-        newUser.license = document.getElementById('docLicense').value.trim();
+        newUser.specialization = document.getElementById('docSpecialization')?.value?.trim() || '';
+        newUser.license = document.getElementById('docLicense')?.value?.trim() || '';
       }
       
+      // Save locally
       DB.users.push(newUser);
-      await saveDatabase(DB);
+      await saveDB(DB);
       
-      // Also save to localStorage
-      localStorage.setItem('physioDatabase', JSON.stringify(DB));
+      // Try to register on API
+      try {
+        await fetch('https://the-good-physio-server.onrender.com/api/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newUser)
+        });
+      } catch (error) {
+        console.log('Saved locally only');
+      }
       
       showMessage(messageEl, '✓ Account created! Redirecting to login...', 'success');
-      event.target.reset();
+      document.getElementById('registerFormElement')?.reset();
       document.querySelectorAll('.role-card').forEach(card => card.classList.remove('selected'));
-      document.getElementById('doctorFields').classList.remove('show');
+      const doctorFields = document.getElementById('doctorFields');
+      if (doctorFields) doctorFields.classList.remove('show');
       selectedRole = '';
       
       setTimeout(() => { switchTab('login'); }, 1500);
     }
-
+  
     function showMessage(element, text, type) {
+      if (!element) return;
       element.textContent = text;
       element.className = 'message ' + type;
       element.style.display = 'block';
