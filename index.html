@@ -65,18 +65,14 @@
       text-decoration: none;
       transition: opacity 0.3s ease;
     }
-    .logo-area:hover {
-      opacity: 0.85;
-    }
+    .logo-area:hover { opacity: 0.85; }
 
     .logo-icon {
       font-size: 2.2rem;
       color: var(--maroon);
       transition: transform 0.3s ease;
     }
-    .logo-area:hover .logo-icon {
-      transform: scale(1.1);
-    }
+    .logo-area:hover .logo-icon { transform: scale(1.1); }
 
     .logo-text {
       font-weight: 700;
@@ -107,9 +103,7 @@
       position: relative;
     }
 
-    .nav-links li {
-      position: relative;
-    }
+    .nav-links li { position: relative; }
 
     .nav-links a {
       text-decoration: none;
@@ -125,9 +119,7 @@
       z-index: 2;
     }
 
-    .nav-links a:hover {
-      color: var(--maroon);
-    }
+    .nav-links a:hover { color: var(--maroon); }
 
     .nav-links a.active {
       color: var(--maroon);
@@ -188,9 +180,7 @@
       flex-wrap: wrap;
     }
 
-    .hero-content {
-      flex: 1 1 400px;
-    }
+    .hero-content { flex: 1 1 400px; }
 
     .hero-content h1 {
       font-size: clamp(2.2rem, 6vw, 3.4rem);
@@ -224,10 +214,7 @@
       50% { transform: translateY(-15px); }
     }
 
-    .hero-image i {
-      font-size: 8rem;
-      opacity: 0.9;
-    }
+    .hero-image i { font-size: 8rem; opacity: 0.9; }
 
     /* Section titles */
     .section-title {
@@ -290,20 +277,14 @@
       align-items: center;
       justify-content: center;
     }
-    .service-card:hover .service-icon {
-      transform: scale(1.1);
-    }
+    .service-card:hover .service-icon { transform: scale(1.1); }
     .service-card h3 {
       font-weight: 700;
       margin-bottom: 0.7rem;
       color: #1e1e1e;
       font-size: 1.2rem;
     }
-    .service-card p {
-      color: #555;
-      line-height: 1.5;
-      font-size: 0.95rem;
-    }
+    .service-card p { color: #555; line-height: 1.5; font-size: 0.95rem; }
 
     /* About Section */
     .about-wrapper {
@@ -314,34 +295,21 @@
       align-items: center;
     }
 
-    .about-text {
-      flex: 1 1 500px;
-    }
-
+    .about-text { flex: 1 1 500px; }
     .about-text h2 {
       font-size: 2rem;
       color: var(--maroon);
       font-weight: 700;
       margin-bottom: 1rem;
     }
-
     .about-text .subtitle {
       font-size: 1.1rem;
       color: #555;
       margin-bottom: 1.5rem;
       line-height: 1.6;
     }
-
-    .about-text p {
-      margin-bottom: 1.2rem;
-      color: #444;
-    }
-
-    .about-features {
-      list-style: none;
-      margin-top: 1.5rem;
-    }
-
+    .about-text p { margin-bottom: 1.2rem; color: #444; }
+    .about-features { list-style: none; margin-top: 1.5rem; }
     .about-features li {
       padding: 0.5rem 0;
       display: flex;
@@ -350,11 +318,7 @@
       font-weight: 500;
       color: #333;
     }
-
-    .about-features li i {
-      color: var(--maroon);
-      font-size: 1.2rem;
-    }
+    .about-features li i { color: var(--maroon); font-size: 1.2rem; }
 
     .about-stats {
       flex: 1 1 320px;
@@ -368,37 +332,48 @@
       text-align: center;
       box-shadow: var(--shadow);
     }
+    .stat-item i { font-size: 2.2rem; margin-bottom: 0.5rem; }
+    .stat-number { font-size: 1.8rem; font-weight: 700; display: block; }
+    .stat-label { font-size: 0.9rem; opacity: 0.9; }
 
-    .stat-item i {
-      font-size: 2.2rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .stat-number {
-      font-size: 1.8rem;
-      font-weight: 700;
-      display: block;
-    }
-    .stat-label {
-      font-size: 0.9rem;
-      opacity: 0.9;
-    }
-
-    /* Testimonials */
-    .testimonial-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.8rem;
+    /* ========== HORIZONTAL SCROLL TESTIMONIALS ========== */
+    .testimonials-wrapper {
+      position: relative;
       margin: 2rem 0 3rem;
     }
 
+    .testimonial-scroll-container {
+      display: flex;
+      gap: 1.5rem;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      padding: 1rem 0.5rem;
+      cursor: grab;
+      scrollbar-width: none; /* Firefox */
+      -ms-overflow-style: none; /* IE/Edge */
+    }
+
+    .testimonial-scroll-container::-webkit-scrollbar {
+      display: none; /* Chrome/Safari */
+    }
+
+    .testimonial-scroll-container:active {
+      cursor: grabbing;
+    }
+
     .testimonial-card {
+      flex: 0 0 calc(25% - 1.125rem); /* Show 4 cards */
+      min-width: 280px;
+      max-width: 400px;
       background: var(--white);
       border: 1px solid var(--gray-border);
       border-radius: 20px;
       padding: 2rem;
       transition: all 0.35s ease;
       box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+      scroll-snap-align: start;
     }
 
     .testimonial-card:hover {
@@ -425,6 +400,7 @@
       color: white;
       font-weight: 700;
       font-size: 1.3rem;
+      flex-shrink: 0;
     }
 
     .testimonial-name {
@@ -462,6 +438,50 @@
       font-style: normal;
     }
 
+    /* Scroll Arrows */
+    .scroll-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: var(--maroon);
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 1.2rem;
+      z-index: 10;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    .scroll-arrow:hover {
+      background: var(--maroon-dark);
+      transform: translateY(-50%) scale(1.1);
+    }
+
+    .scroll-arrow:active {
+      transform: translateY(-50%) scale(0.95);
+    }
+
+    .scroll-arrow-left {
+      left: -25px;
+    }
+
+    .scroll-arrow-right {
+      right: -25px;
+    }
+
+    .scroll-arrow:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+
     /* Contact Section */
     .contact-wrapper {
       display: flex;
@@ -483,13 +503,7 @@
       gap: 1.8rem;
       box-shadow: var(--shadow);
     }
-
-    .contact-info h3 {
-      font-size: 1.8rem;
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-    }
-
+    .contact-info h3 { font-size: 1.8rem; font-weight: 700; margin-bottom: 0.5rem; }
     .info-item {
       display: flex;
       align-items: flex-start;
@@ -497,12 +511,7 @@
       font-size: 1.05rem;
       line-height: 1.5;
     }
-    .info-item i {
-      font-size: 1.5rem;
-      width: 30px;
-      text-align: center;
-      margin-top: 3px;
-    }
+    .info-item i { font-size: 1.5rem; width: 30px; text-align: center; margin-top: 3px; }
     .info-item strong {
       display: block;
       font-size: 0.9rem;
@@ -564,11 +573,7 @@
       display: block;
     }
 
-    .btn-maroon:disabled {
-      opacity: 0.7;
-      cursor: not-allowed;
-      pointer-events: none;
-    }
+    .btn-maroon:disabled { opacity: 0.7; cursor: not-allowed; pointer-events: none; }
 
     /* Footer */
     .footer {
@@ -585,25 +590,31 @@
       transition: all 0.3s ease;
       display: inline-block;
     }
-    .social-links a:hover {
-      opacity: 0.8;
-      transform: translateY(-3px);
-    }
+    .social-links a:hover { opacity: 0.8; transform: translateY(-3px); }
 
     .fade-in-section {
       opacity: 0;
       transform: translateY(30px);
       transition: opacity 0.6s ease, transform 0.6s ease;
     }
-    .fade-in-section.visible {
-      opacity: 1;
-      transform: translateY(0);
+    .fade-in-section.visible { opacity: 1; transform: translateY(0); }
+
+    @media screen and (max-width: 1200px) {
+      .testimonial-card {
+        flex: 0 0 calc(33.333% - 1rem);
+        min-width: 250px;
+      }
+    }
+
+    @media screen and (max-width: 900px) {
+      .testimonial-card {
+        flex: 0 0 calc(50% - 0.75rem);
+        min-width: 250px;
+      }
     }
 
     @media screen and (max-width: 768px) {
-      .mobile-toggle {
-        display: block;
-      }
+      .mobile-toggle { display: block; }
       .nav-menu {
         width: 100%;
         max-height: 0;
@@ -612,48 +623,28 @@
         flex-direction: column;
         align-items: flex-start;
       }
-      .nav-menu.active {
-        max-height: 500px;
-        margin-top: 1rem;
-      }
-      .nav-links {
-        flex-direction: column;
-        width: 100%;
-        gap: 0.5rem;
-      }
-      .nav-indicator {
-        display: none;
-      }
-      .hero-grid {
-        flex-direction: column-reverse;
-        text-align: center;
-      }
-      .hero-content p {
-        margin-left: auto;
-        margin-right: auto;
-      }
-      .about-wrapper {
-        flex-direction: column;
-      }
-      .about-stats {
-        grid-template-columns: 1fr 1fr;
-      }
-      .contact-wrapper {
-        flex-direction: column;
+      .nav-menu.active { max-height: 500px; margin-top: 1rem; }
+      .nav-links { flex-direction: column; width: 100%; gap: 0.5rem; }
+      .nav-indicator { display: none; }
+      .hero-grid { flex-direction: column-reverse; text-align: center; }
+      .hero-content p { margin-left: auto; margin-right: auto; }
+      .about-wrapper { flex-direction: column; }
+      .about-stats { grid-template-columns: 1fr 1fr; }
+      .contact-wrapper { flex-direction: column; }
+      .scroll-arrow-left { left: 10px; }
+      .scroll-arrow-right { right: 10px; }
+    }
+
+    @media screen and (max-width: 600px) {
+      .testimonial-card {
+        flex: 0 0 85%;
+        min-width: auto;
       }
     }
 
     @media screen and (max-width: 480px) {
-      .services-grid {
-        grid-template-columns: 1fr;
-      }
-      .about-stats {
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
-      }
-      .testimonial-grid {
-        grid-template-columns: 1fr;
-      }
+      .services-grid { grid-template-columns: 1fr; }
+      .about-stats { grid-template-columns: 1fr; gap: 1.5rem; }
     }
   </style>
 </head>
@@ -700,9 +691,7 @@
 
     <!-- Services Section -->
     <div id="services" class="container fade-in-section">
-      <div class="section-title">
-        <h2>Our Services</h2>
-      </div>
+      <div class="section-title"><h2>Our Services</h2></div>
       <div class="services-grid">
         <div class="service-card">
           <div class="service-icon"><i class="fas fa-shield-virus"></i></div>
@@ -780,16 +769,22 @@
           <span id="overallRating" style="font-weight:700;">4.8</span> average rating
         </p>
       </div>
-      <div class="testimonial-grid" id="testimonialGrid">
-        <p style="text-align:center; color:#888; grid-column: 1/-1;">Loading reviews...</p>
+      <div class="testimonials-wrapper">
+        <button class="scroll-arrow scroll-arrow-left" id="scrollLeft" aria-label="Scroll left">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+        <div class="testimonial-scroll-container" id="testimonialScroll">
+          <p style="text-align:center; color:#888; flex: 1; min-width: 100%;">Loading reviews...</p>
+        </div>
+        <button class="scroll-arrow scroll-arrow-right" id="scrollRight" aria-label="Scroll right">
+          <i class="fas fa-chevron-right"></i>
+        </button>
       </div>
     </div>
 
     <!-- Contact Section -->
     <div id="contact" class="container fade-in-section">
-      <div class="section-title">
-        <h2>Contact us</h2>
-      </div>
+      <div class="section-title"><h2>Contact us</h2></div>
       <div class="contact-wrapper">
         <div class="contact-info">
           <h3>Reach out to us</h3>
@@ -802,17 +797,11 @@
           </div>
           <div class="info-item">
             <i class="fas fa-phone-alt"></i>
-            <div>
-              <strong>Phone</strong>
-              (0956) 092-1365
-            </div>
+            <div><strong>Phone</strong>(0956) 092-1365</div>
           </div>
           <div class="info-item">
             <i class="fas fa-envelope"></i>
-            <div>
-              <strong>Email</strong>
-              thegoodphysiocare@gmail.com
-            </div>
+            <div><strong>Email</strong>thegoodphysiocare@gmail.com</div>
           </div>
           <div class="info-item">
             <i class="fas fa-clock"></i>
@@ -830,18 +819,10 @@
             <input type="hidden" name="_subject" value="New Patient Inquiry from The Good Physio Website">
             <input type="hidden" name="_captcha" value="false">
             <input type="hidden" name="_template" value="table">
-            <div class="form-group">
-              <input type="text" name="name" placeholder="Full name*" required>
-            </div>
-            <div class="form-group">
-              <input type="email" name="email" placeholder="Email address*" required>
-            </div>
-            <div class="form-group">
-              <input type="tel" name="phone" placeholder="Phone number">
-            </div>
-            <div class="form-group">
-              <textarea name="message" rows="4" placeholder="Tell us about your condition..."></textarea>
-            </div>
+            <div class="form-group"><input type="text" name="name" placeholder="Full name*" required></div>
+            <div class="form-group"><input type="email" name="email" placeholder="Email address*" required></div>
+            <div class="form-group"><input type="tel" name="phone" placeholder="Phone number"></div>
+            <div class="form-group"><textarea name="message" rows="4" placeholder="Tell us about your condition..."></textarea></div>
             <button type="submit" class="btn-maroon" id="submitBtn" style="width: 100%; margin-top: 8px; font-size: 1.1rem;">Send message</button>
             <div class="form-message" id="formMessage"></div>
           </form>
@@ -866,22 +847,26 @@
   <script src="db.js"></script>
   <script>
     (function() {
-      // ========== LOAD RATINGS FROM DATABASE ==========
+      // ========== LOAD RATINGS ==========
       async function loadTestimonials() {
         const db = await loadDB();
         const ratings = db.ratings || [];
-        const grid = document.getElementById('testimonialGrid');
+        const scrollContainer = document.getElementById('testimonialScroll');
         const overallEl = document.getElementById('overallRating');
+        const scrollLeft = document.getElementById('scrollLeft');
+        const scrollRight = document.getElementById('scrollRight');
         
-        if (!grid) return;
+        if (!scrollContainer) return;
         
         if (ratings.length === 0) {
-          grid.innerHTML = `
-            <div class="testimonial-card" style="grid-column:1/-1; text-align:center;">
+          scrollContainer.innerHTML = `
+            <div class="testimonial-card" style="flex: 1; min-width: 100%; text-align:center;">
               <p style="color:#888;">No reviews yet. Be the first to share your experience!</p>
             </div>
           `;
           if (overallEl) overallEl.textContent = '0.0';
+          if (scrollLeft) scrollLeft.style.display = 'none';
+          if (scrollRight) scrollRight.style.display = 'none';
           return;
         }
         
@@ -914,9 +899,13 @@
           return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
         }
         
-        const sortedRatings = ratings.sort((a, b) => new Date(b.date) - new Date(a.date));
+        // Sort by highest rating first, then alphabetically by name
+        const sortedRatings = ratings.sort((a, b) => {
+          if (b.rating !== a.rating) return b.rating - a.rating;
+          return (a.patientName || '').localeCompare(b.patientName || '');
+        });
         
-        grid.innerHTML = sortedRatings.map(r => `
+        scrollContainer.innerHTML = sortedRatings.map(r => `
           <div class="testimonial-card">
             <div class="testimonial-header">
               <div class="testimonial-avatar">${getInitials(r.patientName)}</div>
@@ -929,6 +918,33 @@
             <p class="testimonial-text">${r.review}</p>
           </div>
         `).join('');
+
+        // Scroll functionality
+        if (scrollLeft && scrollRight && scrollContainer) {
+          const scrollAmount = 320;
+          
+          scrollLeft.addEventListener('click', () => {
+            scrollContainer.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+          });
+          
+          scrollRight.addEventListener('click', () => {
+            scrollContainer.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+          });
+          
+          // Update arrow states
+          function updateArrowStates() {
+            const isAtStart = scrollContainer.scrollLeft <= 10;
+            const isAtEnd = scrollContainer.scrollLeft + scrollContainer.clientWidth >= scrollContainer.scrollWidth - 10;
+            
+            scrollLeft.style.opacity = isAtStart ? '0.4' : '1';
+            scrollRight.style.opacity = isAtEnd ? '0.4' : '1';
+            scrollLeft.disabled = isAtStart;
+            scrollRight.disabled = isAtEnd;
+          }
+          
+          scrollContainer.addEventListener('scroll', updateArrowStates);
+          updateArrowStates();
+        }
       }
 
       loadTestimonials();
@@ -985,9 +1001,7 @@
           scrollToSection('home');
           if (navMenu && navMenu.classList.contains('active')) {
             navMenu.classList.remove('active');
-            const icon = mobileToggle.querySelector('i');
-            icon.classList.remove('fa-times');
-            icon.classList.add('fa-bars');
+            mobileToggle.querySelector('i').classList.replace('fa-times', 'fa-bars');
           }
         });
       }
@@ -1003,9 +1017,7 @@
           scrollToSection(sectionId);
           if (navMenu && navMenu.classList.contains('active')) {
             navMenu.classList.remove('active');
-            const icon = mobileToggle.querySelector('i');
-            icon.classList.remove('fa-times');
-            icon.classList.add('fa-bars');
+            mobileToggle.querySelector('i').classList.replace('fa-times', 'fa-bars');
           }
         });
       });
@@ -1015,11 +1027,9 @@
           navMenu.classList.toggle('active');
           const icon = mobileToggle.querySelector('i');
           if (navMenu.classList.contains('active')) {
-            icon.classList.remove('fa-bars');
-            icon.classList.add('fa-times');
+            icon.classList.replace('fa-bars', 'fa-times');
           } else {
-            icon.classList.remove('fa-times');
-            icon.classList.add('fa-bars');
+            icon.classList.replace('fa-times', 'fa-bars');
           }
         });
       }
@@ -1043,9 +1053,7 @@
               formMessage.textContent = '✓ Thank you! Your message has been sent successfully.';
               formMessage.style.display = 'block';
               contactForm.reset();
-            } else {
-              throw new Error('Network error');
-            }
+            } else throw new Error('Network error');
           })
           .catch(() => {
             formMessage.className = 'form-message success';
