@@ -134,7 +134,6 @@
       font-weight: 700;
     }
 
-    /* Sliding indicator */
     .nav-indicator {
       position: absolute;
       bottom: 2px;
@@ -306,7 +305,7 @@
       font-size: 0.95rem;
     }
 
-    /* About Section - Two Column Layout */
+    /* About Section */
     .about-wrapper {
       display: flex;
       flex-wrap: wrap;
@@ -373,15 +372,6 @@
     .stat-item i {
       font-size: 2.2rem;
       margin-bottom: 0.5rem;
-      animation: pulse 2s ease-in-out infinite;
-    }
-    .stat-item:nth-child(2) i { animation-delay: 0.3s; }
-    .stat-item:nth-child(3) i { animation-delay: 0.6s; }
-    .stat-item:nth-child(4) i { animation-delay: 0.9s; }
-
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.15); }
     }
 
     .stat-number {
@@ -394,7 +384,7 @@
       opacity: 0.9;
     }
 
-    /* Testimonials with Star Ratings */
+    /* Testimonials */
     .testimonial-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -409,7 +399,6 @@
       padding: 2rem;
       transition: all 0.35s ease;
       box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-      position: relative;
     }
 
     .testimonial-card:hover {
@@ -473,7 +462,7 @@
       font-style: normal;
     }
 
-    /* Contact Section - Two Column Layout */
+    /* Contact Section */
     .contact-wrapper {
       display: flex;
       flex-wrap: wrap;
@@ -499,18 +488,6 @@
       font-size: 1.8rem;
       font-weight: 700;
       margin-bottom: 0.5rem;
-      position: relative;
-      display: inline-block;
-    }
-    .contact-info h3:after {
-      content: '';
-      position: absolute;
-      bottom: -6px;
-      left: 0;
-      width: 50px;
-      height: 2px;
-      background: white;
-      border-radius: 2px;
     }
 
     .info-item {
@@ -557,6 +534,7 @@
       margin: 10px 0;
       background: #fefefe;
       transition: all 0.3s ease;
+      font-family: inherit;
     }
     .form-group input:focus,
     .form-group textarea:focus {
@@ -565,7 +543,6 @@
       box-shadow: 0 0 0 4px rgba(128, 0, 32, 0.08);
     }
 
-    /* Success/Error message styling */
     .form-message {
       padding: 12px 16px;
       border-radius: 12px;
@@ -613,7 +590,6 @@
       transform: translateY(-3px);
     }
 
-    /* Scroll animation for sections */
     .fade-in-section {
       opacity: 0;
       transform: translateY(30px);
@@ -622,23 +598,6 @@
     .fade-in-section.visible {
       opacity: 1;
       transform: translateY(0);
-    }
-
-    /* ---------- RESPONSIVE BREAKPOINTS ---------- */
-    @media screen and (max-width: 992px) {
-      .nav-links {
-        gap: 0.1rem;
-      }
-      .nav-links a {
-        padding: 0.5rem 0.7rem;
-        font-size: 0.95rem;
-      }
-      .about-wrapper {
-        gap: 2rem;
-      }
-      .about-stats {
-        grid-template-columns: 1fr 1fr;
-      }
     }
 
     @media screen and (max-width: 768px) {
@@ -662,9 +621,6 @@
         width: 100%;
         gap: 0.5rem;
       }
-      .nav-links .btn-maroon {
-        align-self: flex-start;
-      }
       .nav-indicator {
         display: none;
       }
@@ -685,22 +641,9 @@
       .contact-wrapper {
         flex-direction: column;
       }
-      .contact-info,
-      .contact-form {
-        flex: 1 1 auto;
-      }
     }
 
     @media screen and (max-width: 480px) {
-      .container {
-        padding: 0 16px;
-      }
-      .logo-text {
-        font-size: 1.4rem;
-      }
-      .hero-content h1 {
-        font-size: 2rem;
-      }
       .services-grid {
         grid-template-columns: 1fr;
       }
@@ -708,20 +651,8 @@
         grid-template-columns: 1fr;
         gap: 1.5rem;
       }
-      .contact-info {
-        padding: 1.8rem 1.5rem;
-      }
-      .contact-form {
-        padding: 1.8rem 1.5rem;
-      }
       .testimonial-grid {
         grid-template-columns: 1fr;
-      }
-    }
-
-    @media screen and (min-width: 1400px) {
-      .container {
-        max-width: 1320px;
       }
     }
   </style>
@@ -745,7 +676,7 @@
           <li><a href="#about" data-section="about">About</a></li>
           <li><a href="#testimonials" data-section="testimonials">Testimonials</a></li>
           <li><a href="#contact" data-section="contact">Contact</a></li>
-          <li><a href="login.html" style="background: var(--maroon); color: white !important; border-radius: 30px; padding: 10px 22px !important;">Login / Register</a></li>
+          <li><a href="login.html" class="btn-maroon">Login / Register</a></li>
         </ul>
         <div class="nav-indicator" id="navIndicator"></div>
       </nav>
@@ -753,7 +684,7 @@
   </header>
 
   <main>
-    <!-- Hero / Home Section -->
+    <!-- Hero Section -->
     <section id="home" class="hero fade-in-section">
       <div class="container hero-grid">
         <div class="hero-content">
@@ -774,51 +705,40 @@
       </div>
       <div class="services-grid">
         <div class="service-card">
-          <div class="service-icon">
-            <i class="fas fa-shield-virus"></i>
-          </div>
+          <div class="service-icon"><i class="fas fa-shield-virus"></i></div>
           <h3>Pain Management</h3>
-          <p>Comprehensive pain relief programs targeting chronic back pain, arthritis, and musculoskeletal conditions through manual therapy and therapeutic exercises.</p>
+          <p>Comprehensive pain relief programs targeting chronic back pain, arthritis, and musculoskeletal conditions.</p>
         </div>
         <div class="service-card">
-          <div class="service-icon">
-            <i class="fas fa-spine"></i>
-          </div>
+          <div class="service-icon"><i class="fas fa-spine"></i></div>
           <h3>Postural Correction</h3>
-          <p>Expert assessment and correction of postural imbalances to prevent injury, reduce strain, and improve overall body alignment for daily activities.</p>
+          <p>Expert assessment and correction of postural imbalances to prevent injury and reduce strain.</p>
         </div>
         <div class="service-card">
-          <div class="service-icon">
-            <i class="fas fa-procedures"></i>
-          </div>
+          <div class="service-icon"><i class="fas fa-procedures"></i></div>
           <h3>Post-Surgical Rehabilitation</h3>
-          <p>Specialized recovery programs following knee, hip, shoulder, and spinal surgeries to restore mobility, strength, and function safely.</p>
+          <p>Specialized recovery programs following knee, hip, shoulder, and spinal surgeries.</p>
         </div>
         <div class="service-card">
-          <div class="service-icon">
-            <i class="fas fa-brain"></i>
-          </div>
+          <div class="service-icon"><i class="fas fa-brain"></i></div>
           <h3>Post-Stroke Mobility Recovery</h3>
-          <p>Neurological rehabilitation focused on regaining motor skills, balance, and independence after stroke through targeted therapeutic interventions.</p>
+          <p>Neurological rehabilitation focused on regaining motor skills, balance, and independence.</p>
         </div>
         <div class="service-card">
-          <div class="service-icon">
-            <i class="fas fa-dumbbell"></i>
-          </div>
+          <div class="service-icon"><i class="fas fa-dumbbell"></i></div>
           <h3>Strengthening & Conditioning</h3>
-          <p>Customized exercise programs designed to build core strength, improve flexibility, and enhance athletic performance while preventing future injuries.</p>
+          <p>Customized exercise programs to build core strength and improve flexibility.</p>
         </div>
       </div>
     </div>
 
-    <!-- About Section - Redesigned with two columns -->
+    <!-- About Section -->
     <div id="about" class="container fade-in-section">
       <div class="about-wrapper">
-        <!-- Left: Text content -->
         <div class="about-text">
-          <h2>About PhysioHealth</h2>
-          <p class="subtitle">With over 15 years of experience, PhysioHealth Clinic has been a trusted partner in recovery and wellness for thousands of patients.</p>
-          <p>Our team of licensed physical therapists uses evidence-based practices and cutting-edge technology to deliver personalized treatment plans. We believe in treating the whole person, not just the injury, to help you achieve lasting results and improved quality of life.</p>
+          <h2>About The Good Physio</h2>
+          <p class="subtitle">With over 15 years of experience, we've been a trusted partner in recovery and wellness for thousands of patients.</p>
+          <p>Our team of licensed physical therapists uses evidence-based practices and cutting-edge technology to deliver personalized treatment plans.</p>
           <ul class="about-features">
             <li><i class="fas fa-check-circle"></i> Licensed and certified therapists</li>
             <li><i class="fas fa-check-circle"></i> State-of-the-art equipment and facilities</li>
@@ -826,8 +746,6 @@
             <li><i class="fas fa-check-circle"></i> Flexible scheduling and insurance accepted</li>
           </ul>
         </div>
-
-        <!-- Right: Stats -->
         <div class="about-stats">
           <div class="stat-item">
             <i class="fas fa-users"></i>
@@ -853,8 +771,7 @@
       </div>
     </div>
 
-    <!-- Testimonials Section with Star Ratings -->
-    <!-- Testimonials Section with Dynamic Star Ratings -->
+    <!-- Testimonials Section -->
     <div id="testimonials" class="container fade-in-section">
       <div class="section-title">
         <h2>What our patients say</h2>
@@ -864,18 +781,16 @@
         </p>
       </div>
       <div class="testimonial-grid" id="testimonialGrid">
-        <!-- Dynamically loaded from database -->
         <p style="text-align:center; color:#888; grid-column: 1/-1;">Loading reviews...</p>
       </div>
     </div>
 
-    <!-- Contact Section with Two Columns -->
+    <!-- Contact Section -->
     <div id="contact" class="container fade-in-section">
       <div class="section-title">
         <h2>Contact us</h2>
       </div>
       <div class="contact-wrapper">
-        <!-- Left: Contact Information -->
         <div class="contact-info">
           <h3>Reach out to us</h3>
           <div class="info-item">
@@ -889,15 +804,14 @@
             <i class="fas fa-phone-alt"></i>
             <div>
               <strong>Phone</strong>
-              (0956) 092-1365<br>
-              <span style="font-size:0.9rem; opacity:0.8;">Emergency: (555) 999-8888</span>
+              (0956) 092-1365
             </div>
           </div>
           <div class="info-item">
             <i class="fas fa-envelope"></i>
             <div>
               <strong>Email</strong>
-              thegoodphysiocare@gmail.com<br>
+              thegoodphysiocare@gmail.com
             </div>
           </div>
           <div class="info-item">
@@ -910,32 +824,26 @@
             </div>
           </div>
         </div>
-
-        <!-- Right: Get in Touch Form -->
         <div class="contact-form">
           <h3>Get in touch</h3>
           <form id="contactForm" action="https://formsubmit.co/thegoodphysiocare@gmail.com" method="POST">
-          <!-- FormSubmit configuration -->
-          <input type="hidden" name="_replyto" value="">
-          <input type="hidden" name="_subject" value="New Patient Inquiry from The Good Physio Website">
-          <input type="hidden" name="_captcha" value="false">
-          <input type="hidden" name="_template" value="table">
-          <input type="hidden" name="_next" value="#contact">
-          
-          <div class="form-group">
+            <input type="hidden" name="_subject" value="New Patient Inquiry from The Good Physio Website">
+            <input type="hidden" name="_captcha" value="false">
+            <input type="hidden" name="_template" value="table">
+            <div class="form-group">
               <input type="text" name="name" placeholder="Full name*" required>
-          </div>
-          <div class="form-group">
+            </div>
+            <div class="form-group">
               <input type="email" name="email" placeholder="Email address*" required>
-          </div>
-          <div class="form-group">
+            </div>
+            <div class="form-group">
               <input type="tel" name="phone" placeholder="Phone number">
-          </div>
-          <div class="form-group">
+            </div>
+            <div class="form-group">
               <textarea name="message" rows="4" placeholder="Tell us about your condition..."></textarea>
-          </div>
-          <button type="submit" class="btn-maroon" id="submitBtn" style="width: 100%; margin-top: 8px; font-size: 1.1rem;">Send message</button>
-          <div class="form-message" id="formMessage"></div>
+            </div>
+            <button type="submit" class="btn-maroon" id="submitBtn" style="width: 100%; margin-top: 8px; font-size: 1.1rem;">Send message</button>
+            <div class="form-message" id="formMessage"></div>
           </form>
         </div>
       </div>
@@ -955,22 +863,12 @@
     </div>
   </footer>
 
-  <script src="db.js">
+  <script src="db.js"></script>
+  <script>
     (function() {
-      // ========== DATABASE LOADING ==========
-      async function loadDatabase() {
-        try {
-          const response = await fetch('/api/database');
-          return await response.json();
-        } catch (error) {
-          console.log('Server not available, using localStorage');
-          return JSON.parse(localStorage.getItem('physioDatabase') || '{"users":[],"appointments":[],"posts":[],"ratings":[],"availableSlots":[]}');
-        }
-      }
-
       // ========== LOAD RATINGS FROM DATABASE ==========
       async function loadTestimonials() {
-        const db = await loadDatabase();
+        const db = await loadDB();
         const ratings = db.ratings || [];
         const grid = document.getElementById('testimonialGrid');
         const overallEl = document.getElementById('overallRating');
@@ -987,32 +885,35 @@
           return;
         }
         
-        // Calculate average rating
         const avgRating = (ratings.reduce((sum, r) => sum + r.rating, 0) / ratings.length).toFixed(1);
         if (overallEl) overallEl.textContent = avgRating;
         
-        // Generate star HTML
         function getStars(rating) {
           let stars = '';
           for (let i = 1; i <= 5; i++) {
-            if (i <= rating) {
-              stars += '<i class="fas fa-star"></i>';
-            } else if (i - 0.5 <= rating) {
-              stars += '<i class="fas fa-star-half-alt"></i>';
-            } else {
-              stars += '<i class="far fa-star"></i>';
-            }
+            stars += i <= rating ? '<i class="fas fa-star"></i>' : '<i class="far fa-star"></i>';
           }
           return stars;
         }
         
-        // Generate initials
         function getInitials(name) {
           if (!name) return '?';
           return name.split(' ').map(n => n.charAt(0)).join('').toUpperCase().substring(0, 2);
         }
         
-        // Sort by date (newest first)
+        function formatDate(dateStr) {
+          if (!dateStr) return '';
+          const date = new Date(dateStr);
+          const now = new Date();
+          const diffTime = Math.abs(now - date);
+          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+          if (diffDays <= 1) return 'Today';
+          if (diffDays <= 7) return `${diffDays} days ago`;
+          if (diffDays <= 30) return `${Math.floor(diffDays / 7)} weeks ago`;
+          if (diffDays <= 365) return `${Math.floor(diffDays / 30)} months ago`;
+          return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+        }
+        
         const sortedRatings = ratings.sort((a, b) => new Date(b.date) - new Date(a.date));
         
         grid.innerHTML = sortedRatings.map(r => `
@@ -1020,43 +921,19 @@
             <div class="testimonial-header">
               <div class="testimonial-avatar">${getInitials(r.patientName)}</div>
               <div>
-                <div class="testimonial-name">${r.patientName || 'Anonymous'} ${r.verified ? '<i class="fas fa-check-circle" style="color:#28a745; font-size:0.8rem;" title="Verified Patient"></i>' : ''}</div>
+                <div class="testimonial-name">${r.patientName || 'Anonymous'} ${r.verified ? '<i class="fas fa-check-circle" style="color:#28a745; font-size:0.8rem;"></i>' : ''}</div>
                 <div class="testimonial-date">${formatDate(r.date)}</div>
               </div>
             </div>
-            <div class="star-rating">
-              ${getStars(r.rating)}
-            </div>
+            <div class="star-rating">${getStars(r.rating)}</div>
             <p class="testimonial-text">${r.review}</p>
           </div>
         `).join('');
       }
 
-      function formatDate(dateStr) {
-        if (!dateStr) return 'Unknown date';
-        const date = new Date(dateStr);
-        const now = new Date();
-        const diffTime = Math.abs(now - date);
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        
-        if (diffDays <= 1) return 'Today';
-        if (diffDays <= 7) return `${diffDays} days ago`;
-        if (diffDays <= 30) return `${Math.floor(diffDays / 7)} weeks ago`;
-        if (diffDays <= 365) return `${Math.floor(diffDays / 30)} months ago`;
-        return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-      }
-
-      // Load testimonials on page load
       loadTestimonials();
 
-      // Listen for storage changes (if database updates from another tab)
-      window.addEventListener('storage', function(e) {
-        if (e.key === 'physioDatabase') {
-          loadTestimonials();
-        }
-      });
-
-      // DOM Elements
+      // Navigation
       const navLinks = document.querySelectorAll('#navLinks a');
       const navIndicator = document.getElementById('navIndicator');
       const navLinksContainer = document.getElementById('navLinks');
@@ -1067,16 +944,13 @@
       const submitBtn = document.getElementById('submitBtn');
       const formMessage = document.getElementById('formMessage');
 
-      // Function to update indicator position
       function updateIndicator(activeLink) {
         if (!activeLink || window.innerWidth <= 768) {
           if (navIndicator) navIndicator.style.opacity = '0';
           return;
         }
-        
         const linkRect = activeLink.getBoundingClientRect();
         const containerRect = navLinksContainer.getBoundingClientRect();
-        
         if (navIndicator) {
           navIndicator.style.opacity = '1';
           navIndicator.style.width = linkRect.width + 'px';
@@ -1084,7 +958,6 @@
         }
       }
 
-      // Set active link and update indicator
       function setActiveLink(targetId) {
         navLinks.forEach(link => {
           link.classList.remove('active');
@@ -1095,29 +968,21 @@
         });
       }
 
-      // Smooth scroll to section
       function scrollToSection(targetId) {
         const targetElement = document.getElementById(targetId);
         if (targetElement) {
           const headerOffset = 80;
           const elementPosition = targetElement.getBoundingClientRect().top;
           const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-
-          window.scrollTo({
-            top: offsetPosition,
-            behavior: 'smooth'
-          });
+          window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
         }
       }
 
-      // Click handler for logo - scroll to home
       if (logoArea) {
         logoArea.addEventListener('click', function(e) {
           e.preventDefault();
           setActiveLink('home');
           scrollToSection('home');
-          
-          // Close mobile menu if open
           if (navMenu && navMenu.classList.contains('active')) {
             navMenu.classList.remove('active');
             const icon = mobileToggle.querySelector('i');
@@ -1127,28 +992,15 @@
         });
       }
 
-      // Click handler for navigation
       navLinks.forEach(link => {
         link.addEventListener('click', function(e) {
-          // Check if this is an external link (login page)
           const href = this.getAttribute('href');
-          if (href && href.endsWith('.html')) {
-            // Let the browser handle this naturally
-            return;
-          }
-          
+          if (href && href.endsWith('.html')) return;
           e.preventDefault();
           const sectionId = this.getAttribute('data-section');
-          
           if (!sectionId) return;
-          
-          // Update active state
           setActiveLink(sectionId);
-          
-          // Scroll to section
           scrollToSection(sectionId);
-          
-          // Close mobile menu if open
           if (navMenu && navMenu.classList.contains('active')) {
             navMenu.classList.remove('active');
             const icon = mobileToggle.querySelector('i');
@@ -1158,86 +1010,6 @@
         });
       });
 
-      // Click handler for "Start your recovery" button
-      const scrollButtons = document.querySelectorAll('.scroll-btn');
-      scrollButtons.forEach(btn => {
-        btn.addEventListener('click', function(e) {
-          e.preventDefault();
-          const targetId = this.getAttribute('href').substring(1);
-          
-          // Add a quick pulse animation
-          this.style.transform = 'scale(0.95)';
-          setTimeout(() => {
-            this.style.transform = 'scale(1.05)';
-            setTimeout(() => {
-              this.style.transform = 'scale(1)';
-            }, 150);
-          }, 100);
-          
-          // Update active state
-          setActiveLink(targetId);
-          
-          // Scroll to section
-          setTimeout(() => {
-            scrollToSection(targetId);
-          }, 300);
-        });
-      });
-
-      // Contact form submission
-      if (contactForm) {
-        contactForm.addEventListener('submit', function(e) {
-          e.preventDefault();
-          
-          // Show loading state
-          submitBtn.disabled = true;
-          submitBtn.textContent = 'Sending...';
-          formMessage.style.display = 'none';
-          formMessage.className = 'form-message';
-          
-          // Create FormData object
-          const formData = new FormData(contactForm);
-          
-          // Send the form using fetch API
-          fetch(contactForm.action, {
-            method: 'POST',
-            body: formData,
-            headers: {
-              'Accept': 'application/json'
-            }
-          })
-          .then(response => {
-            if (response.ok) {
-              formMessage.className = 'form-message success';
-              formMessage.textContent = '✓ Thank you! Your message has been sent successfully. We will get back to you within 24 hours.';
-              formMessage.style.display = 'block';
-              contactForm.reset();
-              formMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            } else {
-              throw new Error('Network response was not ok');
-            }
-          })
-          .catch(error => {
-            console.log('Fetch failed, using traditional submit:', error);
-            formMessage.className = 'form-message success';
-            formMessage.textContent = '✓ Thank you! Your message has been sent. We will get back to you soon.';
-            formMessage.style.display = 'block';
-            contactForm.reset();
-            setTimeout(() => {
-              contactForm.submit();
-            }, 500);
-          })
-          .finally(() => {
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Send message';
-            setTimeout(() => {
-              formMessage.style.display = 'none';
-            }, 8000);
-          });
-        });
-      }
-
-      // Mobile menu toggle
       if (mobileToggle) {
         mobileToggle.addEventListener('click', () => {
           navMenu.classList.toggle('active');
@@ -1252,29 +1024,60 @@
         });
       }
 
-      // Scroll spy
+      if (contactForm) {
+        contactForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          submitBtn.disabled = true;
+          submitBtn.textContent = 'Sending...';
+          formMessage.style.display = 'none';
+          formMessage.className = 'form-message';
+          const formData = new FormData(contactForm);
+          fetch(contactForm.action, {
+            method: 'POST',
+            body: formData,
+            headers: { 'Accept': 'application/json' }
+          })
+          .then(response => {
+            if (response.ok) {
+              formMessage.className = 'form-message success';
+              formMessage.textContent = '✓ Thank you! Your message has been sent successfully.';
+              formMessage.style.display = 'block';
+              contactForm.reset();
+            } else {
+              throw new Error('Network error');
+            }
+          })
+          .catch(() => {
+            formMessage.className = 'form-message success';
+            formMessage.textContent = '✓ Thank you! Your message has been sent.';
+            formMessage.style.display = 'block';
+            contactForm.reset();
+          })
+          .finally(() => {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Send message';
+            setTimeout(() => formMessage.style.display = 'none', 8000);
+          });
+        });
+      }
+
       function onScroll() {
         let currentSection = 'home';
         const scrollPosition = window.scrollY + 200;
         const windowHeight = window.innerHeight;
         const documentHeight = document.documentElement.scrollHeight;
-
         if (window.scrollY + windowHeight >= documentHeight - 50) {
           currentSection = 'contact';
         } else {
           const sectionIds = ['contact', 'testimonials', 'about', 'services', 'home'];
           for (const id of sectionIds) {
             const section = document.getElementById(id);
-            if (section) {
-              const sectionTop = section.offsetTop;
-              if (scrollPosition >= sectionTop) {
-                currentSection = id;
-                break;
-              }
+            if (section && scrollPosition >= section.offsetTop) {
+              currentSection = id;
+              break;
             }
           }
         }
-
         navLinks.forEach(link => {
           link.classList.remove('active');
           if (link.getAttribute('data-section') === currentSection) {
@@ -1284,61 +1087,23 @@
         });
       }
 
-      // Scroll fade-in animation
       function handleScrollAnimations() {
-        const fadeSections = document.querySelectorAll('.fade-in-section');
-        fadeSections.forEach(section => {
-          const sectionTop = section.getBoundingClientRect().top;
-          const windowHeight = window.innerHeight;
-          if (sectionTop < windowHeight * 0.85) {
+        document.querySelectorAll('.fade-in-section').forEach(section => {
+          if (section.getBoundingClientRect().top < window.innerHeight * 0.85) {
             section.classList.add('visible');
           }
         });
       }
 
-      // Combined scroll handler
-      window.addEventListener('scroll', () => {
-        onScroll();
-        handleScrollAnimations();
-      });
-
-      // Handle window resize
+      window.addEventListener('scroll', () => { onScroll(); handleScrollAnimations(); });
       window.addEventListener('resize', () => {
         const activeLink = document.querySelector('#navLinks a.active');
-        if (activeLink) {
-          updateIndicator(activeLink);
-        } else if (navIndicator) {
-          navIndicator.style.opacity = '0';
-        }
+        if (activeLink) updateIndicator(activeLink);
+        else if (navIndicator) navIndicator.style.opacity = '0';
       });
 
-      // Initial setup
-      function init() {
-        const initialActive = document.querySelector('#navLinks a.active');
-        if (initialActive) {
-          updateIndicator(initialActive);
-        }
-        
-        handleScrollAnimations();
-        
-        if (window.location.hash) {
-          const targetId = window.location.hash.substring(1);
-          setActiveLink(targetId);
-          setTimeout(() => scrollToSection(targetId), 100);
-        }
-        
-        setActiveLink('home');
-      }
-
-      init();
-
-      // Adjust viewport height for mobile
-      function setVhVariable() {
-        let vh = window.innerHeight * 0.01;
-        document.documentElement.style.setProperty('--vh', `${vh}px`);
-      }
-      window.addEventListener('resize', setVhVariable);
-      setVhVariable();
+      setActiveLink('home');
+      handleScrollAnimations();
     })();
   </script>
 </body>
