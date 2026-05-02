@@ -986,89 +986,49 @@
     </div>
   </div>
 
-  <script src="db.js">
-    // ==================== DATABASE ====================
-    async function loadDB() {
-      try {
-        const response = await fetch('/api/database');
-        const data = await response.json();
-        return data;
-      } catch (error) {
-        // Fallback to localStorage if server not available
-        console.log('Server not available, using localStorage');
-        return JSON.parse(localStorage.getItem('physioDatabase') || '{"users":[],"appointments":[],"posts":[],"availableSlots":["09:00","10:00","11:00","13:00","14:00","15:00","16:00","17:00"]}');
-      }
-    }
-    
-    async function saveDB(db) {
-      try {
-        await fetch('/api/database', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(db)
-        });
-      } catch (error) {
-        // Fallback to localStorage
-        localStorage.setItem('physioDatabase', JSON.stringify(db));
-      }
-    }
-    
-    function getLoggedInUser() {
-      // Try sessionStorage first (from server login)
-      let u = sessionStorage.getItem('physioLoggedInUser');
-      if (!u) {
-        // Fallback to localStorage
-        u = localStorage.getItem('physioLoggedInUser');
-      }
-      return u ? JSON.parse(u) : null;
-    }
-
-    // Initialize database
-    let DB = {
-      users: [],
-      appointments: [],
-      posts: [],
-      availableSlots: ["09:00", "10:00", "11:00", "13:00", "14:00", "15:00", "16:00", "17:00"]
-    };
-    
+ <script src="db.js"></script>
+  <script>
+    // ==================== GLOBAL VARIABLES ====================
+    let DB = null;
     let user = getLoggedInUser();
-    if (!user) {
-      alert('Please log in first');
-      window.location.href = '/login.html';
-    }
-
+    if (!user) window.location.href = 'login.html';
+    
     let selectedPatientId = null;
     let allPatients = [];
-
-    // ==================== INIT ====================
+  
+    // ==================== INIT DASHBOARD ====================
     async function initDashboard() {
       DB = await loadDB();
-      console.log('Database loaded:', DB);
-      console.log('Current user:', user);
       
-      const displayName = user.name || [user.firstname, user.surname].filter(Boolean).join(' ') || 'Unknown';
+      // Refresh user data from database
+      const dbUser = DB.users.find(u => u.id === user.id);
+      if (dbUser) {
+        user = dbUser;
+        localStorage.setItem('physioLoggedInUser', JSON.stringify(user));
+      }
+      
+      // Header - display name
+      const displayName = user.name || [user.firstname, user.surname].filter(Boolean).join(' ') || 'User';
       document.getElementById('headerUserName').textContent = displayName;
       document.getElementById('headerUserRole').textContent = `${user.role} (${user.id})`;
       
-      // Set profile picture based on sex
+      // Profile picture based on sex
       const profilePic = document.getElementById('headerProfilePic');
       if (profilePic) {
         const sex = (user.sex || '').toLowerCase();
-        if (sex === 'male') {
-          profilePic.innerHTML = '<i class="fas fa-male"></i>';
-        } else if (sex === 'female') {
-          profilePic.innerHTML = '<i class="fas fa-female"></i>';
-        } else {
-          profilePic.innerHTML = '<i class="fas fa-user"></i>';
-        }
+        if (sex === 'male') profilePic.innerHTML = '<i class="fas fa-male"></i>';
+        else if (sex === 'female') profilePic.innerHTML = '<i class="fas fa-female"></i>';
+        else profilePic.innerHTML = '<i class="fas fa-user"></i>';
       }
       
-        const firstName = user.firstname || (user.name ? user.name.split(' ')[0] : 'User');
-        document.getElementById('welcomeBanner').innerHTML = `
-          <h1>Welcome, ${firstName}!</h1>
-          <p>${user.role === 'doctor' ? 'Manage appointments, patient records, and clinic updates.' : 'Book appointments and stay updated.'}</p>
-        `;
-
+      // Welcome banner
+      const firstName = user.firstname || (user.name ? user.name.split(' ')[0] : 'User');
+      document.getElementById('welcomeBanner').innerHTML = `
+        <h1>Welcome, ${firstName}!</h1>
+        <p>${user.role === 'doctor' ? 'Manage appointments, patient records, and clinic updates.' : 'Book appointments and stay updated with your recovery journey.'}</p>
+      `;
+  
+      // Build tabs
       const patientTabs = [
         { id: 'viewPosts', label: '📢 Updates & Promos' },
         { id: 'bookAppointment', label: '📅 Book Appointment' },
@@ -1081,7 +1041,7 @@
         { id: 'patientRecords', label: '📁 Patient Records' }
       ];
       const tabs = user.role === 'patient' ? patientTabs : doctorTabs;
-
+  
       const tabNav = document.getElementById('tabNav');
       tabNav.innerHTML = '';
       tabs.forEach((tab, i) => {
@@ -1093,7 +1053,7 @@
       });
       
       switchTab(tabs[0].id);
-
+  
       // Settings dropdown
       const settingsBtn = document.getElementById('settingsBtn');
       if (settingsBtn) {
@@ -1102,53 +1062,43 @@
           document.getElementById('dropdownMenu').classList.toggle('active');
         });
       }
-
       document.addEventListener('click', function() {
         const dropdown = document.getElementById('dropdownMenu');
         if (dropdown) dropdown.classList.remove('active');
       });
-
-      // Set min date for appointment booking
+  
+      // Set min date for booking
       const selectDate = document.getElementById('selectDate');
       if (selectDate) selectDate.setAttribute('min', new Date().toISOString().split('T')[0]);
-
+  
       // Load initial data
       if (user.role === 'patient') {
-        loadPosts(); 
-        loadDoctors(); 
-        loadMyAppointments(); 
-        loadMyRatings();
+        loadPosts(); loadDoctors(); loadMyAppointments(); loadMyRatings();
       } else {
-        loadDoctorAppointments(); 
-        loadPatientList(); 
-        loadDoctorPosts();
+        loadDoctorAppointments(); loadPatientList(); loadDoctorPosts();
       }
     }
-
-    // Run initialization
+  
     initDashboard();
-
-    // ==================== PROFILE REDIRECT ====================
+  
+    // ==================== NAVIGATION ====================
     function goToProfile() {
-      window.location.href = '/profile.html';
+      window.location.href = 'profile.html';
     }
-
-    // ==================== TAB SWITCHING ====================
+  
     function switchTab(tabId) {
       document.querySelectorAll('.tab-nav button').forEach(b => b.classList.remove('active'));
       document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
       const target = document.getElementById('tab-' + tabId);
       if (target) target.classList.add('active');
       
-      // Find and activate the correct tab button
-      const buttons = document.querySelectorAll('.tab-nav button');
       const tabs = user.role === 'patient' ? 
         ['viewPosts', 'bookAppointment', 'myAppointments', 'rateService'] : 
         ['createPost', 'doctorAppointments', 'patientRecords'];
       const idx = tabs.indexOf(tabId);
+      const buttons = document.querySelectorAll('.tab-nav button');
       if (idx >= 0 && buttons[idx]) buttons[idx].classList.add('active');
       
-      // Load data for the selected tab
       if (tabId === 'viewPosts') loadPosts();
       if (tabId === 'myAppointments') loadMyAppointments();
       if (tabId === 'doctorAppointments') loadDoctorAppointments();
@@ -1157,51 +1107,38 @@
       if (tabId === 'rateService') loadMyRatings();
       if (tabId === 'bookAppointment') loadDoctors();
     }
-
+  
     // ==================== DELETE ACCOUNT ====================
     function confirmDeleteAccount() {
       document.getElementById('deleteAccountModal').style.display = 'block';
     }
-
+  
     function closeDeleteModal() {
       document.getElementById('deleteAccountModal').style.display = 'none';
-      const deletePassword = document.getElementById('deletePassword');
-      if (deletePassword) deletePassword.value = '';
+      const dp = document.getElementById('deletePassword');
+      if (dp) dp.value = '';
     }
-
+  
     async function deleteAccount() {
-      DB = await loadDB();
       const password = document.getElementById('deletePassword').value;
-      
       if (password !== user.password) {
         showToast('deleteMessage', 'Incorrect password.', 'error');
         return;
       }
+      if (!confirm('Permanently delete your account and all data?')) return;
       
-      if (!confirm('Are you absolutely sure? This will permanently delete your account and all associated data.')) return;
-      
-      // Remove user from database
       DB.users = DB.users.filter(u => u.id !== user.id);
-      
-      // Remove user's appointments
       DB.appointments = (DB.appointments || []).filter(a => a.patientId !== user.id && a.doctorId !== user.id);
-      
-      // Remove user's posts (if doctor)
       DB.posts = (DB.posts || []).filter(p => p.doctorId !== user.id);
-      
-      // Remove user's ratings
       DB.ratings = (DB.ratings || []).filter(r => r.patientId !== user.id);
-      
       await saveDB(DB);
       
-      // Clear login and redirect
-      sessionStorage.removeItem('physioLoggedInUser');
       localStorage.removeItem('physioLoggedInUser');
-      alert('Your account has been permanently deleted.');
-      window.location.href = '/index.html';
+      alert('Account deleted.');
+      window.location.href = 'index.html';
     }
-
-    // ==================== PATIENT: Posts ====================
+  
+    // ==================== PATIENT: POSTS ====================
     function loadPosts() {
       const posts = DB.posts || [];
       const container = document.getElementById('postsContainer');
@@ -1216,15 +1153,15 @@
         </div>
       `).join('');
     }
-
-    // ==================== PATIENT: Booking ====================
+  
+    // ==================== PATIENT: BOOKING ====================
     function loadDoctors() {
       const select = document.getElementById('selectDoctor');
       if (!select) return;
       const docs = DB.users.filter(u => u.role === 'doctor');
       select.innerHTML = '<option value="">Choose a doctor...</option>' + docs.map(d => `<option value="${d.id}">${d.name} - ${d.specialization || 'General'}</option>`).join('');
     }
-
+  
     function loadAvailableSlots() {
       const docId = document.getElementById('selectDoctor').value;
       const date = document.getElementById('selectDate').value;
@@ -1233,26 +1170,23 @@
       const booked = (DB.appointments || []).filter(a => a.doctorId === docId && a.date === date && a.status !== 'cancelled').map(a => a.time);
       container.innerHTML = (DB.availableSlots || []).map(t => {
         const isBooked = booked.includes(t);
-        return `<div class="time-slot ${isBooked ? 'booked' : 'available'}" ${!isBooked ? `onclick="selectTimeSlot(this,'${t}')"` : ''}>${t} ${isBooked ? '🔴 Booked' : '🟢 Available'}</div>`;
+        return `<div class="time-slot ${isBooked ? 'booked' : 'available'}" ${!isBooked ? `onclick="selectTimeSlot(this,'${t}')"` : ''}>${t} ${isBooked ? '🔴' : '🟢'}</div>`;
       }).join('');
       window.selectedTime = null;
     }
-
+  
     function selectTimeSlot(el, time) {
       document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
       el.classList.add('selected');
       window.selectedTime = time;
     }
-
+  
     async function bookAppointment() {
       const docId = document.getElementById('selectDoctor').value;
       const date = document.getElementById('selectDate').value;
       const service = document.getElementById('selectService').value;
       const notes = document.getElementById('appointmentNotes').value;
       if (!docId || !date || !service || !window.selectedTime) { showToast('bookingMessage', 'Fill all fields.', 'error'); return; }
-      if ((DB.appointments || []).find(a => a.doctorId === docId && a.date === date && a.time === window.selectedTime && a.status !== 'cancelled')) {
-        showToast('bookingMessage', 'Slot already booked!', 'error'); loadAvailableSlots(); return;
-      }
       const doc = DB.users.find(u => u.id === docId);
       const apt = {
         id: 'APT' + String((DB.appointments || []).length + 1).padStart(3, '0'),
@@ -1260,21 +1194,21 @@
         date, time: window.selectedTime, service, status: 'confirmed', notes, created: new Date().toISOString().split('T')[0]
       };
       if (!DB.appointments) DB.appointments = [];
-      DB.appointments.push(apt); 
+      DB.appointments.push(apt);
       await saveDB(DB);
       showToast('bookingMessage', 'Booked! 🎉', 'success');
       loadAvailableSlots(); loadMyAppointments();
     }
-
+  
     function loadMyAppointments() {
       const apps = (DB.appointments || []).filter(a => a.patientId === user.id);
       const c = document.getElementById('myAppointmentsContainer');
       if (!c) return;
       if (!apps.length) { c.innerHTML = '<p style="color:#888;">No appointments.</p>'; return; }
-      c.innerHTML = `<table><thead><tr><th>Date</th><th>Time</th><th>Doctor</th><th>Service</th><th>Status</th></tr></thead><tbody>${apps.sort((a,b)=>new Date(b.date)-new Date(a.date)).map(a => `<tr><td>${a.date}</td><td>${a.time}</td><td>${a.doctorName}</td><td>${a.service}</td><td class="status-confirmed">${a.status.charAt(0).toUpperCase()+a.status.slice(1)}</td></tr>`).join('')}</tbody></table>`;
+      c.innerHTML = `<table><thead><tr><th>Date</th><th>Time</th><th>Doctor</th><th>Service</th><th>Status</th></tr></thead><tbody>${apps.sort((a,b)=>new Date(b.date)-new Date(a.date)).map(a => `<tr><td>${a.date}</td><td>${a.time}</td><td>${a.doctorName}</td><td>${a.service}</td><td class="status-confirmed">Confirmed</td></tr>`).join('')}</tbody></table>`;
     }
-
-    // ==================== DOCTOR: Posts ====================
+  
+    // ==================== DOCTOR: POSTS ====================
     async function createPost() {
       const title = document.getElementById('postTitle').value.trim();
       const content = document.getElementById('postContent').value.trim();
@@ -1287,14 +1221,14 @@
         time: new Date().toTimeString().split(' ')[0].substring(0,5)
       };
       if (!DB.posts) DB.posts = [];
-      DB.posts.push(post); 
+      DB.posts.push(post);
       await saveDB(DB);
       showToast('postMessage', 'Published! 📢', 'success');
-      document.getElementById('postTitle').value = ''; 
+      document.getElementById('postTitle').value = '';
       document.getElementById('postContent').value = '';
       loadDoctorPosts();
     }
-
+  
     function loadDoctorPosts() {
       const posts = (DB.posts || []).filter(p => p.doctorId === user.id);
       const c = document.getElementById('doctorPostsContainer');
@@ -1304,283 +1238,162 @@
         <div class="post-card">
           <div class="post-meta"><span class="badge badge-${p.type}">${p.type.toUpperCase()}</span> 📅 ${p.date} at ${p.time}</div>
           <div class="post-title">${p.title}</div><div>${p.content}</div>
-          <button onclick="deletePost('${p.id}')" style="margin-top:8px;background:#dc3545;color:white;border:none;padding:5px 14px;border-radius:15px;cursor:pointer;font-size:0.8rem;">🗑 Delete</button>
+          <button onclick="deletePost('${p.id}')" style="margin-top:8px;background:#dc3545;color:white;border:none;padding:5px 14px;border-radius:15px;cursor:pointer;">🗑 Delete</button>
         </div>
       `).join('');
     }
-
-    async function deletePost(id) { 
-      DB.posts = (DB.posts || []).filter(p => p.id !== id); 
-      await saveDB(DB); 
-      loadDoctorPosts(); 
+  
+    async function deletePost(id) {
+      DB.posts = (DB.posts || []).filter(p => p.id !== id);
+      await saveDB(DB);
+      loadDoctorPosts();
     }
-
-    // ==================== DOCTOR: Appointments ====================
+  
+    // ==================== DOCTOR: APPOINTMENTS ====================
     function loadDoctorAppointments() {
       const apps = (DB.appointments || []).filter(a => a.doctorId === user.id);
       const c = document.getElementById('doctorAppointmentsContainer');
       if (!c) return;
       if (!apps.length) { c.innerHTML = '<p style="color:#888;">No appointments.</p>'; return; }
-      c.innerHTML = `<table><thead><tr><th>Date</th><th>Time</th><th>Patient</th><th>Service</th><th>Status</th><th>Notes</th></tr></thead><tbody>${apps.sort((a,b)=>new Date(a.date)-new Date(b.date)).map(a => `<tr><td>${a.date}</td><td>${a.time}</td><td><strong>${a.patientName}</strong></td><td>${a.service}</td><td class="status-confirmed">${a.status.charAt(0).toUpperCase()+a.status.slice(1)}</td><td>${a.notes||'-'}</td></tr>`).join('')}</tbody></table>`;
+      c.innerHTML = `<table><thead><tr><th>Date</th><th>Time</th><th>Patient</th><th>Service</th><th>Status</th></tr></thead><tbody>${apps.sort((a,b)=>new Date(a.date)-new Date(b.date)).map(a => `<tr><td>${a.date}</td><td>${a.time}</td><td><strong>${a.patientName}</strong></td><td>${a.service}</td><td class="status-confirmed">Confirmed</td></tr>`).join('')}</tbody></table>`;
     }
-
-    // ==================== DOCTOR: Patient Records ====================
+  
+    // ==================== DOCTOR: PATIENT RECORDS ====================
     function loadPatientList() {
       allPatients = DB.users.filter(u => u.role === 'patient');
       renderPatientList(allPatients);
     }
-
+  
     function filterPatients() {
       const q = document.getElementById('patientSearch').value.toLowerCase();
-      const filtered = allPatients.filter(p => 
-        (p.name || '').toLowerCase().includes(q) || p.id.toLowerCase().includes(q) ||
-        (p.surname || '').toLowerCase().includes(q) || (p.firstname || '').toLowerCase().includes(q)
-      );
+      const filtered = allPatients.filter(p => (p.name || '').toLowerCase().includes(q) || p.id.toLowerCase().includes(q));
       renderPatientList(filtered);
     }
-
+  
     function renderPatientList(list) {
       const c = document.getElementById('patientList');
       if (!c) return;
       if (!list.length) { c.innerHTML = '<p style="color:#888;">No patients found.</p>'; return; }
       c.innerHTML = list.map(p => `
         <div class="patient-select-item ${selectedPatientId === p.id ? 'selected' : ''}" onclick="selectPatient('${p.id}')">
-          <div>
-            <strong>${p.name || [p.firstname, p.surname].filter(Boolean).join(' ')}</strong>
-            <div style="font-size:0.8rem;color:#888;">ID: ${p.id} | ${p.sex || 'N/A'} | ${p.phone || 'No phone'}</div>
-          </div>
+          <div><strong>${p.name || [p.firstname, p.surname].filter(Boolean).join(' ')}</strong>
+          <div style="font-size:0.8rem;color:#888;">ID: ${p.id}</div></div>
           <i class="fas fa-chevron-right" style="color:var(--maroon);"></i>
         </div>
       `).join('');
     }
-
-    function selectPatient(id) {
-      selectedPatientId = id;
-      renderPatientList(allPatients);
-    }
-
+  
+    function selectPatient(id) { selectedPatientId = id; renderPatientList(allPatients); }
+  
     function viewPatientRecord() {
       if (!selectedPatientId) { alert('Select a patient first.'); return; }
       const patient = DB.users.find(u => u.id === selectedPatientId);
       if (!patient) return;
-      
       document.getElementById('patientSelectionCard').style.display = 'none';
       document.getElementById('patientProfileCard').style.display = 'block';
-      document.getElementById('addHistoryCard').style.display = 'none';
-      document.getElementById('addPatientCard').style.display = 'none';
-      
-      const fullName = patient.name || [patient.firstname, patient.middlename, patient.surname].filter(Boolean).join(' ');
-      const ec = patient.emergencyContact || {};
+      const fullName = patient.name || [patient.firstname, patient.surname].filter(Boolean).join(' ');
       const history = patient.medicalHistory || [];
-      
       document.getElementById('patientProfileContent').innerHTML = `
-        <div class="profile-header">
-          <div class="profile-avatar">${(patient.firstname || patient.name || 'P').charAt(0).toUpperCase()}</div>
-          <div>
-            <h2 style="color:var(--maroon);">${fullName}</h2>
-            <p style="color:#888;">Patient ID: ${patient.id} | ${patient.sex || 'N/A'} | Age: ${patient.age || 'N/A'}</p>
+        <h2 style="color:var(--maroon);">${fullName}</h2>
+        <p>ID: ${patient.id} | ${patient.sex || 'N/A'} | Age: ${patient.age || 'N/A'}</p>
+        <h4 style="margin-top:1rem;">Medical History (${history.length} visits)</h4>
+        ${history.length === 0 ? '<p>No history.</p>' : history.map(h => `
+          <div style="background:#f9f9f9;padding:1rem;border-radius:8px;margin:0.5rem 0;border-left:3px solid var(--maroon);">
+            <div style="color:var(--maroon);font-weight:600;">📅 ${h.date}</div>
+            <div>👨‍⚕️ ${h.doctorName}</div>
+            <div>🔍 ${h.diagnosis}</div>
+            <div>💊 ${h.treatment}</div>
           </div>
-        </div>
-        <div class="profile-info-grid">
-          <div class="info-item"><div class="info-label">Full Name</div><div class="info-value">${patient.surname || ''}, ${patient.firstname || ''} ${patient.middlename || ''}</div></div>
-          <div class="info-item"><div class="info-label">Date of Birth</div><div class="info-value">${patient.birthdate || 'N/A'}</div></div>
-          <div class="info-item"><div class="info-label">Age</div><div class="info-value">${patient.age || 'N/A'}</div></div>
-          <div class="info-item"><div class="info-label">Sex</div><div class="info-value">${patient.sex || 'N/A'}</div></div>
-          <div class="info-item"><div class="info-label">Address</div><div class="info-value">${patient.address || 'N/A'}</div></div>
-          <div class="info-item"><div class="info-label">Email</div><div class="info-value">${patient.email || 'N/A'}</div></div>
-          <div class="info-item"><div class="info-label">Phone</div><div class="info-value">${patient.phone || 'N/A'}</div></div>
-          <div class="info-item"><div class="info-label">Occupation</div><div class="info-value">${patient.occupation || 'N/A'}</div></div>
-          <div class="info-item"><div class="info-label">Registered</div><div class="info-value">${patient.created || 'N/A'}</div></div>
-        </div>
-        <div class="card" style="margin-top:1rem; background:#fff5f7;">
-          <h4 style="color:var(--maroon);">🆘 Emergency Contact</h4>
-          <div class="profile-info-grid">
-            <div class="info-item"><div class="info-label">Name</div><div class="info-value">${ec.name || 'N/A'}</div></div>
-            <div class="info-item"><div class="info-label">Phone</div><div class="info-value">${ec.phone || 'N/A'}</div></div>
-            <div class="info-item"><div class="info-label">Relationship</div><div class="info-value">${ec.relationship || 'N/A'}</div></div>
-          </div>
-        </div>
-        <h3 style="margin-top:1.5rem; color:var(--maroon);">📋 Medical History (${history.length} visits)</h3>
-        <div class="history-timeline">
-          ${history.length === 0 ? '<p style="color:#888;">No medical history recorded yet.</p>' : 
-            history.sort((a,b) => new Date(b.date) - new Date(a.date)).map(h => `
-              <div class="history-card">
-                <div class="history-date">📅 ${h.date} ${h.followUp ? '→ Follow-up: ' + h.followUp : ''}</div>
-                <div class="history-doctor">👨‍⚕️ ${h.doctorName}</div>
-                <div class="history-diagnosis">🔍 Diagnosis: ${h.diagnosis}</div>
-                <div class="history-treatment">💊 Treatment: ${h.treatment}</div>
-                <div class="history-comments">💬 "${h.comments}"</div>
-              </div>
-            `).join('')
-          }
-        </div>
+        `).join('')}
       `;
     }
-
-    function showAddHistoryForm() {
-      document.getElementById('addHistoryCard').style.display = 'block';
-      document.getElementById('histDate').value = new Date().toISOString().split('T')[0];
-    }
-
-    function cancelHistoryForm() {
-      document.getElementById('addHistoryCard').style.display = 'none';
-    }
-
+  
     async function saveMedicalHistory() {
       const patient = DB.users.find(u => u.id === selectedPatientId);
       if (!patient) return;
-      
-      const histEntry = {
-        id: 'HIST' + String((patient.medicalHistory || []).length + 1).padStart(3, '0'),
+      const entry = {
         date: document.getElementById('histDate').value,
-        followUp: document.getElementById('histFollowUp').value,
-        doctorId: user.id,
-        doctorName: user.name,
         diagnosis: document.getElementById('histDiagnosis').value,
         treatment: document.getElementById('histTreatment').value,
-        comments: document.getElementById('histComments').value
+        doctorName: user.name
       };
-      
-      if (!histEntry.diagnosis || !histEntry.treatment) {
-        showToast('historyMessage', 'Please fill diagnosis and treatment.', 'error');
-        return;
-      }
-      
+      if (!entry.diagnosis || !entry.treatment) { alert('Fill diagnosis and treatment.'); return; }
       if (!patient.medicalHistory) patient.medicalHistory = [];
-      patient.medicalHistory.push(histEntry);
+      patient.medicalHistory.push(entry);
       await saveDB(DB);
-      
-      showToast('historyMessage', 'Medical history saved! ✅', 'success');
-      document.getElementById('addHistoryCard').style.display = 'none';
-      document.getElementById('histDiagnosis').value = '';
-      document.getElementById('histTreatment').value = '';
-      document.getElementById('histComments').value = '';
+      alert('Saved!');
       viewPatientRecord();
     }
-
+  
     function backToPatientList() {
       document.getElementById('patientSelectionCard').style.display = 'block';
       document.getElementById('patientProfileCard').style.display = 'none';
-      document.getElementById('addHistoryCard').style.display = 'none';
-      document.getElementById('addPatientCard').style.display = 'none';
       loadPatientList();
     }
-
+  
     function resetPatientView() {
       document.getElementById('patientSelectionCard').style.display = 'block';
       document.getElementById('patientProfileCard').style.display = 'none';
-      document.getElementById('addHistoryCard').style.display = 'none';
-      document.getElementById('addPatientCard').style.display = 'none';
     }
-
-    // ==================== STAR RATING ====================
+  
+    // ==================== RATINGS ====================
     (function initStarRating() {
       const stars = document.querySelectorAll('#starRatingInput i');
-      const ratingText = document.getElementById('ratingText');
-      const ratingTexts = ['Click a star to rate', 'Poor', 'Fair', 'Good', 'Very Good', 'Excellent!'];
-      
       if (!stars.length) return;
-      
       stars.forEach(star => {
-        star.addEventListener('mouseover', function() {
-          const rating = parseInt(this.dataset.rating);
-          updateStars(rating, 'hover');
-          if (ratingText) ratingText.textContent = ratingTexts[rating];
-        });
-        
-        star.addEventListener('mouseout', function() {
-          const currentRating = parseInt(document.getElementById('selectedRating').value);
-          updateStars(currentRating, 'selected');
-          if (ratingText) ratingText.textContent = currentRating > 0 ? ratingTexts[currentRating] : 'Click a star to rate';
-        });
-        
         star.addEventListener('click', function() {
           const rating = parseInt(this.dataset.rating);
           document.getElementById('selectedRating').value = rating;
-          updateStars(rating, 'selected');
-          if (ratingText) ratingText.textContent = ratingTexts[rating];
+          stars.forEach((s, i) => s.className = i < rating ? 'fas fa-star selected' : 'far fa-star');
         });
       });
-      
-      function updateStars(rating, className) {
-        stars.forEach(s => {
-          s.className = parseInt(s.dataset.rating) <= rating ? `fas fa-star ${className}` : 'far fa-star';
-        });
-      }
     })();
-
+  
     async function submitRating() {
       const rating = parseInt(document.getElementById('selectedRating').value);
       const review = document.getElementById('reviewText').value.trim();
-      
-      if (rating === 0) { showToast('ratingMessage', 'Please select a star rating.', 'error'); return; }
-      if (!review) { showToast('ratingMessage', 'Please write a review.', 'error'); return; }
-      
+      if (!rating) { showToast('ratingMessage', 'Select a rating.', 'error'); return; }
+      if (!review) { showToast('ratingMessage', 'Write a review.', 'error'); return; }
       const newRating = {
         id: 'RATE' + String((DB.ratings || []).length + 1).padStart(3, '0'),
         patientId: user.id, patientName: user.name, rating, review,
         date: new Date().toISOString().split('T')[0], verified: true
       };
-      
       if (!DB.ratings) DB.ratings = [];
       DB.ratings.push(newRating);
       await saveDB(DB);
-      showToast('ratingMessage', 'Thank you for your review! ⭐', 'success');
-      document.getElementById('selectedRating').value = 0;
+      showToast('ratingMessage', 'Thank you! ⭐', 'success');
       document.getElementById('reviewText').value = '';
-      document.getElementById('ratingText').textContent = 'Click a star to rate';
-      document.querySelectorAll('#starRatingInput i').forEach(s => s.className = 'far fa-star');
       loadMyRatings();
     }
-
+  
     function loadMyRatings() {
-      const myRatings = (DB.ratings || []).filter(r => r.patientId === user.id);
+      const ratings = (DB.ratings || []).filter(r => r.patientId === user.id);
       const container = document.getElementById('myRatingsContainer');
       if (!container) return;
-      if (myRatings.length === 0) { container.innerHTML = '<p style="color:#888;">No reviews yet.</p>'; return; }
-      
-      function getStars(rating) {
-        let stars = '';
-        for (let i = 1; i <= 5; i++) stars += i <= rating ? '<i class="fas fa-star"></i>' : '<i class="far fa-star"></i>';
-        return stars;
-      }
-      
-      container.innerHTML = myRatings.sort((a, b) => new Date(b.date) - new Date(a.date)).map(r => `
+      if (!ratings.length) { container.innerHTML = '<p style="color:#888;">No reviews yet.</p>'; return; }
+      container.innerHTML = ratings.map(r => `
         <div class="review-card">
-          <div class="review-header">
-            <div class="review-stars">${getStars(r.rating)} <span style="color:#333;font-weight:600;">${r.rating}/5</span></div>
-            <div>
-              <span class="review-date">${r.date}</span>
-              <button class="btn-delete" onclick="deleteRating('${r.id}')" style="margin-left:10px;">🗑 Delete</button>
-            </div>
-          </div>
+          <div class="review-stars">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)} ${r.rating}/5</div>
           <div class="review-text">"${r.review}"</div>
-          <div style="font-size:0.8rem;color:#888;margin-top:0.5rem;">${r.verified ? '✅ Verified Patient' : ''}</div>
+          <div style="font-size:0.8rem;color:#888;">${r.date}</div>
         </div>
       `).join('');
     }
-
-    async function deleteRating(ratingId) {
-      if (!confirm('Are you sure you want to delete this review?')) return;
-      DB.ratings = (DB.ratings || []).filter(r => r.id !== ratingId);
-      await saveDB(DB);
-      loadMyRatings();
-    }
-
+  
     // ==================== UTILS ====================
     function showToast(id, msg, type) {
       const el = document.getElementById(id);
       if (!el) return;
-      el.textContent = msg; 
-      el.className = 'message-toast ' + type; 
+      el.textContent = msg;
+      el.className = 'message-toast ' + type;
       el.style.display = 'block';
       setTimeout(() => el.style.display = 'none', 3000);
     }
-
+  
     function logout() {
-      sessionStorage.removeItem('physioLoggedInUser');
       localStorage.removeItem('physioLoggedInUser');
-      window.location.href = '/index.html';
+      window.location.href = 'index.html';
     }
   </script>
 </body>
