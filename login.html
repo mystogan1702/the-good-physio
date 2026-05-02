@@ -594,36 +594,23 @@
       const email = document.getElementById('loginEmail').value.trim();
       const password = document.getElementById('loginPassword').value.trim();
       const role = document.getElementById('loginRole').value;
-      const messageEl = document.getElementById('loginMessage');
       
-      // Reload DB if needed
-      if (!DB) {
-        DB = await fetchDatabase();
-      }
+      // Try API first
+      const result = await loginViaAPI(email, password, role);
       
-      if (!DB || !DB.users) {
-        showMessage(messageEl, 'Database not loaded. Please refresh the page.', 'error');
-        return;
-      }
-      
-      const user = DB.users.find(u => u.email === email && u.password === password && u.role === role);
-      
-      if (user) {
-        showMessage(messageEl, '✓ Login successful! Redirecting...', 'success');
-        
-        // Store user data
-        sessionStorage.setItem('physioLoggedInUser', JSON.stringify(user));
-        console.log('User saved to session:', user.id, user.name);
-        
-        // Save database to localStorage as backup
-        localStorage.setItem('physioDatabase', JSON.stringify(DB));
-        
-        // Redirect to dashboard
-        setTimeout(() => { 
-          window.location.href = 'dashboard.html';
-        }, 500);
+      if (result.success) {
+        localStorage.setItem('physioLoggedInUser', JSON.stringify(result.user));
+        window.location.href = 'dashboard.html';
       } else {
-        showMessage(messageEl, '❌ Invalid credentials or role. Please try again.', 'error');
+        // Fallback to local
+        const DB = loadDB();
+        const user = DB.users.find(u => u.email === email && u.password === password && u.role === role);
+        if (user) {
+          localStorage.setItem('physioLoggedInUser', JSON.stringify(user));
+          window.location.href = 'dashboard.html';
+        } else {
+          showMessage(messageEl, 'Invalid credentials', 'error');
+        }
       }
     }
 
