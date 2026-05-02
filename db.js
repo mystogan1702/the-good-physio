@@ -1,7 +1,5 @@
-// db.js - API client for The Good Physio
-// CHANGE THIS URL to your Render.com URL after deployment
+// db.js - API Client for The Good Physio
 const API_URL = 'https://the-good-physio-server.onrender.com';
-// For local testing: const API_URL = 'http://localhost:3000';
 
 async function loadDB() {
   try {
@@ -9,16 +7,14 @@ async function loadDB() {
     if (!response.ok) throw new Error('Network error');
     return await response.json();
   } catch (error) {
-    console.error('Server unavailable, using localStorage fallback');
+    console.warn('Server unavailable, using localStorage');
     const local = localStorage.getItem('physioDatabase');
     return local ? JSON.parse(local) : initializeLocalDB();
   }
 }
 
 async function saveDB(db) {
-  // Save locally first (backup)
   localStorage.setItem('physioDatabase', JSON.stringify(db));
-  
   try {
     await fetch(`${API_URL}/api/database`, {
       method: 'POST',
@@ -26,7 +22,7 @@ async function saveDB(db) {
       body: JSON.stringify(db)
     });
   } catch (error) {
-    console.warn('Could not sync to server, data saved locally');
+    console.warn('Saved to localStorage (server unavailable)');
   }
 }
 
@@ -46,12 +42,15 @@ function initializeLocalDB() {
 }
 
 function getLoggedInUser() {
-  const u = localStorage.getItem('physioLoggedInUser') || sessionStorage.getItem('physioLoggedInUser');
-  return u ? JSON.parse(u) : null;
+  const u = localStorage.getItem('physioLoggedInUser');
+  if (!u) {
+    window.location.href = 'login.html';
+    return null;
+  }
+  return JSON.parse(u);
 }
 
-// Helper: Login via API
-async function loginViaAPI(email, password, role) {
+async function loginUser(email, password, role) {
   try {
     const response = await fetch(`${API_URL}/api/login`, {
       method: 'POST',
@@ -60,12 +59,14 @@ async function loginViaAPI(email, password, role) {
     });
     return await response.json();
   } catch (error) {
-    return { success: false, message: 'Cannot connect to server' };
+    // Fallback to local
+    const DB = loadDB();
+    const user = DB.users.find(u => u.email === email && u.password === password && u.role === role);
+    return user ? { success: true, user } : { success: false, message: 'Invalid credentials' };
   }
 }
 
-// Helper: Register via API
-async function registerViaAPI(userData) {
+async function registerUser(userData) {
   try {
     const response = await fetch(`${API_URL}/api/register`, {
       method: 'POST',
