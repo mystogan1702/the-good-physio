@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Good Physio | Profile Settings</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Roboto, 'Helvetica Neue', system-ui, sans-serif;
+      background: #f8f5f5;
+      color: #2c2c2c;
+      line-height: 1.5;
+    }
+
+    :root {
+      --maroon: #800020;
+      --maroon-dark: #5c0017;
+      --maroon-light: #a52a3a;
+      --white: #ffffff;
+      --gray-light: #f8f5f5;
+      --gray-border: #e0d7d7;
+      --success: #28a745;
+      --danger: #dc3545;
+      --shadow: 0 10px 25px rgba(0,0,0,0.08);
+    }
+
+    .dashboard-header {
+      background: var(--white);
+      box-shadow: 0 2px 10px rgba(128, 0, 32, 0.08);
+      padding: 1rem 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 2px solid var(--maroon);
+    }
+
+    .header-content {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+    }
+
+    .header-left i {
+      font-size: 2rem;
+      color: var(--maroon);
+    }
+
+    .header-left h2 {
+      color: var(--maroon);
+      font-size: 1.5rem;
+    }
+
+    .btn-back {
+      padding: 8px 20px;
+      background: transparent;
+      border: 2px solid var(--maroon);
+      color: var(--maroon);
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-back:hover {
+      background: var(--maroon);
+      color: white;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 0 20px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 20px;
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--gray-border);
+    }
+
+    .card h3 {
+      color: var(--maroon);
+      margin-bottom: 1.5rem;
+      font-size: 1.3rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .profile-picture-large {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background: var(--maroon);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 4rem;
+      color: white;
+      margin: 0 auto 1.5rem;
+      border: 4px solid var(--maroon-light);
+      overflow: hidden;
+    }
+
+    .profile-picture-large img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .user-name-display {
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 0.2rem;
+    }
+
+    .user-role-display {
+      text-align: center;
+      color: #888;
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+    }
+
+    .info-item {
+      padding: 0.8rem;
+      background: #f9f9f9;
+      border-radius: 10px;
+      border-left: 3px solid var(--maroon);
+    }
+
+    .info-label {
+      font-size: 0.75rem;
+      color: #888;
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+    }
+
+    .info-value {
+      font-weight: 600;
+      color: #333;
+      font-size: 1rem;
+    }
+
+    .info-section {
+      background: #f9f9f9;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      border-left: 4px solid var(--maroon);
+    }
+
+    .info-section h4 {
+      color: var(--maroon);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .form-field {
+      margin-bottom: 1.2rem;
+    }
+
+    .form-field label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+      color: #333;
+      font-size: 0.85rem;
+    }
+
+    .form-field input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1.5px solid #ddd;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+      font-family: inherit;
+    }
+
+    .form-field input:focus {
+      outline: none;
+      border-color: var(--maroon);
+      box-shadow: 0 0 0 4px rgba(128, 0, 32, 0.08);
+    }
+
+    .btn-save {
+      padding: 12px 28px;
+      background: var(--maroon);
+      color: white;
+      border: none;
+      border-radius: 25px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.95rem;
+      font-family: inherit;
+    }
+
+    .btn-save:hover {
+      background: var(--maroon-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(128, 0, 32, 0.3);
+    }
+
+    .message-toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 14px 20px;
+      border-radius: 10px;
+      color: white;
+      font-weight: 600;
+      z-index: 1000;
+      animation: slideIn 0.3s ease;
+      display: none;
+    }
+
+    .message-toast.success { background: var(--success); display: block; }
+    .message-toast.error { background: var(--danger); display: block; }
+
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    .lock-icon {
+      color: #888;
+      font-size: 0.8rem;
+      margin-left: 5px;
+    }
+
+    @media (max-width: 768px) {
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="dashboard-header">
+    <div class="header-content">
+      <div class="header-left" onclick="window.location.href='dashboard.html'">
+        <i class="fas fa-heartbeat"></i>
+        <h2>The Good Physio</h2>
+      </div>
+      <a href="dashboard.html" class="btn-back">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+      </a>
+    </div>
+  </header>
+
+  <div class="container">
+    <!-- Profile Information Card -->
+    <div class="card">
+      <h3><i class="fas fa-user-circle"></i> Profile Information</h3>
+      
+      <div class="profile-picture-large" id="profilePictureLarge">
+        <!-- Dynamically loaded based on sex -->
+      </div>
+      <div class="user-name-display" id="displayName"></div>
+      <div class="user-role-display" id="displayRole"></div>
+      
+      <div class="info-grid" id="profileInfoGrid">
+        <!-- Dynamically loaded -->
+      </div>
+      
+      <p style="margin-top: 1rem; color: #888; font-size: 0.85rem;">
+        <i class="fas fa-lock lock-icon"></i> Personal information is confidential and cannot be changed. Contact administration for updates.
+      </p>
+    </div>
+
+    <!-- Change Password Card -->
+    <div class="card">
+      <h3><i class="fas fa-key"></i> Change Password</h3>
+      
+      <div class="form-field">
+        <label>Current Password</label>
+        <input type="password" id="currentPassword" placeholder="Enter current password">
+      </div>
+      
+      <div class="form-field">
+        <label>New Password</label>
+        <input type="password" id="newPassword" placeholder="Enter new password">
+      </div>
+      
+      <div class="form-field">
+        <label>Confirm New Password</label>
+        <input type="password" id="confirmPassword" placeholder="Re-enter new password">
+      </div>
+      
+      <button class="btn-save" onclick="changePassword()">
+        <i class="fas fa-save"></i> Save Password
+      </button>
+      
+      <div class="message-toast" id="passwordMessage"></div>
+    </div>
+  </div>
+
+  <script>
+    // ==================== DATABASE API ====================
+    async function fetchDatabase() {
+      try {
+        const response = await fetch('/api/database');
+        return await response.json();
+      } catch (error) {
+        console.log('Server not available, using localStorage');
+        return JSON.parse(localStorage.getItem('physioDatabase') || '{"users":[],"appointments":[],"posts":[],"availableSlots":[]}');
+      }
+    }
+
+    async function saveDatabase(DB) {
+      try {
+        await fetch('/api/database', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(DB)
+        });
+        // Also save to localStorage as backup
+        localStorage.setItem('physioDatabase', JSON.stringify(DB));
+      } catch (error) {
+        console.log('Server not available, saving to localStorage');
+        localStorage.setItem('physioDatabase', JSON.stringify(DB));
+      }
+    }
+
+    function getLoggedInUser() {
+      // Try sessionStorage first (from server login)
+      let u = sessionStorage.getItem('physioLoggedInUser');
+      if (!u) {
+        // Fallback to localStorage
+        u = localStorage.getItem('physioLoggedInUser');
+      }
+      return u ? JSON.parse(u) : null;
+    }
+
+    let user = getLoggedInUser();
+    if (!user) {
+      alert('Please log in first');
+      window.location.href = '/login.html';
+    }
+
+    console.log('Profile - Logged in user:', user);
+
+    // ==================== INIT PROFILE ====================
+    async function initProfile() {
+      // Reload from database to get latest data
+      const DB = await fetchDatabase();
+      const dbUser = DB.users.find(u => u.id === user.id);
+      const currentUser = dbUser || user;
+      
+      console.log('Profile - Full user data:', currentUser);
+      
+      // Update user variable with full data
+      user = currentUser;
+      
+      // Update session/local storage with full data
+      sessionStorage.setItem('physioLoggedInUser', JSON.stringify(currentUser));
+      localStorage.setItem('physioLoggedInUser', JSON.stringify(currentUser));
+      
+      // Profile picture based on sex
+      const profilePic = document.getElementById('profilePictureLarge');
+      const sex = (currentUser.sex || '').toLowerCase();
+      
+      if (sex === 'male') {
+        profilePic.innerHTML = '<i class="fas fa-male"></i>';
+      } else if (sex === 'female') {
+        profilePic.innerHTML = '<i class="fas fa-female"></i>';
+      } else {
+        profilePic.innerHTML = '<i class="fas fa-user"></i>';
+      }
+      
+      // Display name and role
+      const fullName = currentUser.name || [currentUser.firstname, currentUser.middlename, currentUser.surname].filter(Boolean).join(' ');
+      document.getElementById('displayName').textContent = fullName || 'Unknown';
+      document.getElementById('displayRole').textContent = `${currentUser.role.charAt(0).toUpperCase() + currentUser.role.slice(1)} • ID: ${currentUser.id}`;
+      
+      // Profile info grid - show ALL available fields
+      const infoGrid = document.getElementById('profileInfoGrid');
+      const infoItems = [];
+      
+      // Personal Information
+      if (fullName && fullName.trim()) infoItems.push({ label: 'Full Name', value: fullName });
+      if (currentUser.id) infoItems.push({ label: 'User ID', value: currentUser.id });
+      if (currentUser.email) infoItems.push({ label: 'Email Address', value: currentUser.email });
+      if (currentUser.sex && currentUser.sex.trim()) infoItems.push({ label: 'Sex', value: currentUser.sex });
+      if (currentUser.age) infoItems.push({ label: 'Age', value: currentUser.age });
+      if (currentUser.birthdate) infoItems.push({ label: 'Date of Birth', value: currentUser.birthdate });
+      if (currentUser.phone) infoItems.push({ label: 'Phone Number', value: currentUser.phone });
+      if (currentUser.occupation && currentUser.occupation.trim()) infoItems.push({ label: 'Occupation', value: currentUser.occupation });
+      if (currentUser.address) infoItems.push({ label: 'Home Address', value: currentUser.address });
+      
+      // Professional fields (for doctors)
+      if (currentUser.specialization) infoItems.push({ label: 'Specialization', value: currentUser.specialization });
+      if (currentUser.license) infoItems.push({ label: 'License Number', value: currentUser.license });
+      
+      // Account info
+      if (currentUser.created) infoItems.push({ label: 'Registered Date', value: currentUser.created });
+      
+      // Emergency contact (if exists)
+      if (currentUser.emergencyContact) {
+        const ec = currentUser.emergencyContact;
+        if (ec.name) infoItems.push({ label: 'Emergency Contact Name', value: ec.name });
+        if (ec.phone) infoItems.push({ label: 'Emergency Contact Phone', value: ec.phone });
+        if (ec.relationship) infoItems.push({ label: 'Emergency Relationship', value: ec.relationship });
+      }
+      
+      if (infoItems.length === 0) {
+        infoGrid.innerHTML = '<p style="color:#888;">No profile information available.</p>';
+        return;
+      }
+      
+      infoGrid.innerHTML = infoItems.map(item => `
+        <div class="info-item">
+          <div class="info-label">${item.label}</div>
+          <div class="info-value">${item.value || 'N/A'}</div>
+        </div>
+      `).join('');
+    }
+
+    // Run profile initialization
+    initProfile();
+
+    // ==================== CHANGE PASSWORD ====================
+    async function changePassword() {
+      const currentPassword = document.getElementById('currentPassword').value;
+      const newPassword = document.getElementById('newPassword').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      
+      if (!currentPassword || !newPassword || !confirmPassword) {
+        showToast('passwordMessage', 'All fields are required.', 'error');
+        return;
+      }
+      
+      // Get current password from database
+      const DB = await fetchDatabase();
+      const dbUser = DB.users.find(u => u.id === user.id);
+      const actualPassword = dbUser ? dbUser.password : user.password;
+      
+      if (currentPassword !== actualPassword) {
+        showToast('passwordMessage', 'Current password is incorrect.', 'error');
+        return;
+      }
+      
+      if (newPassword.length < 6) {
+        showToast('passwordMessage', 'New password must be at least 6 characters.', 'error');
+        return;
+      }
+      
+      if (newPassword !== confirmPassword) {
+        showToast('passwordMessage', 'New passwords do not match.', 'error');
+        return;
+      }
+      
+      if (currentPassword === newPassword) {
+        showToast('passwordMessage', 'New password must be different from current password.', 'error');
+        return;
+      }
+      
+      // Update password in database
+      if (dbUser) {
+        dbUser.password = newPassword;
+        await saveDatabase(DB);
+        
+        // Update logged in user
+        user.password = newPassword;
+        sessionStorage.setItem('physioLoggedInUser', JSON.stringify(user));
+        localStorage.setItem('physioLoggedInUser', JSON.stringify(user));
+        
+        showToast('passwordMessage', 'Password changed successfully! ✅', 'success');
+        
+        document.getElementById('currentPassword').value = '';
+        document.getElementById('newPassword').value = '';
+        document.getElementById('confirmPassword').value = '';
+      } else {
+        showToast('passwordMessage', 'User not found in database.', 'error');
+      }
+    }
+
+    function showToast(id, msg, type) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.textContent = msg; 
+      el.className = 'message-toast ' + type;
+      setTimeout(() => el.style.display = 'none', 3000);
+    }
+  </script>
+</body>
+</html>

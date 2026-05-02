@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Good Physio | Login & Register</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Roboto, 'Helvetica Neue', system-ui, sans-serif;
+      background: linear-gradient(135deg, #fdf7f7 0%, #ffffff 50%, #f8f5f5 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    :root {
+      --maroon: #800020;
+      --maroon-dark: #5c0017;
+      --maroon-light: #a52a3a;
+      --white: #ffffff;
+      --gray-light: #f8f5f5;
+      --gray-border: #e0d7d7;
+      --text-dark: #1e1e1e;
+      --shadow: 0 20px 40px rgba(128, 0, 32, 0.15);
+    }
+
+    .auth-container {
+      width: 100%;
+      max-width: 1100px;
+      background: white;
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      display: flex;
+      min-height: 700px;
+      position: relative;
+    }
+
+    .auth-sidebar {
+      background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-dark) 100%);
+      color: white;
+      padding: 3rem 2rem;
+      flex: 0.8;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .auth-sidebar::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
+      animation: rotate 20s linear infinite;
+    }
+
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .auth-sidebar i {
+      font-size: 4rem;
+      margin-bottom: 1.5rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .auth-sidebar h2 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      font-weight: 700;
+      position: relative;
+      z-index: 1;
+    }
+
+    .auth-sidebar p {
+      opacity: 0.9;
+      line-height: 1.6;
+      font-size: 1.05rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .auth-form-area {
+      flex: 1.2;
+      padding: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      max-height: 85vh;
+    }
+
+    .auth-header {
+      margin-bottom: 1.5rem;
+    }
+
+    .auth-header h1 {
+      font-size: 2rem;
+      color: var(--maroon);
+      margin-bottom: 0.5rem;
+    }
+
+    .auth-header p {
+      color: #666;
+      font-size: 0.95rem;
+    }
+
+    .tab-buttons {
+      display: flex;
+      gap: 0;
+      margin-bottom: 1.5rem;
+      border-radius: 12px;
+      background: var(--gray-light);
+      padding: 4px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 12px 20px;
+      border: none;
+      background: transparent;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      color: #666;
+    }
+
+    .tab-btn.active {
+      background: var(--maroon);
+      color: white;
+      box-shadow: 0 4px 12px rgba(128, 0, 32, 0.3);
+    }
+
+    .form-container {
+      display: none;
+    }
+
+    .form-container.active {
+      display: block;
+    }
+
+    .role-selector {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .role-card {
+      flex: 1;
+      padding: 1rem;
+      border: 2px solid var(--gray-border);
+      border-radius: 12px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .role-card:hover {
+      border-color: var(--maroon-light);
+    }
+
+    .role-card.selected {
+      border-color: var(--maroon);
+      background: #fff5f7;
+    }
+
+    .role-card i {
+      font-size: 1.8rem;
+      color: var(--maroon);
+      margin-bottom: 0.3rem;
+      display: block;
+    }
+
+    .role-card span {
+      font-weight: 600;
+      display: block;
+      font-size: 0.9rem;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .form-row-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.3rem;
+      font-weight: 600;
+      color: #333;
+      font-size: 0.85rem;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1.5px solid #ddd;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+      font-family: inherit;
+      background: #fefefe;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--maroon);
+      box-shadow: 0 0 0 4px rgba(128, 0, 32, 0.08);
+    }
+
+    .fieldset {
+      border: 2px solid var(--gray-border);
+      border-radius: 14px;
+      padding: 1.2rem;
+      margin-bottom: 1rem;
+      background: #fefefe;
+    }
+
+    .fieldset legend {
+      font-weight: 700;
+      color: var(--maroon);
+      padding: 0 10px;
+      font-size: 0.95rem;
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 13px;
+      background: var(--maroon);
+      color: white;
+      border: none;
+      border-radius: 25px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 0.5rem;
+    }
+
+    .btn-submit:hover {
+      background: var(--maroon-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(128, 0, 32, 0.3);
+    }
+
+    .message {
+      padding: 10px 14px;
+      border-radius: 10px;
+      margin-top: 0.8rem;
+      display: none;
+      font-weight: 500;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+
+    .message.success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+      display: block;
+    }
+
+    .message.error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+      display: block;
+    }
+
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-top: 1.2rem;
+      color: var(--maroon);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
+    .doctor-fields,
+    .patient-fields {
+      display: none;
+    }
+
+    .doctor-fields.show,
+    .patient-fields.show {
+      display: block;
+    }
+
+    @media (max-width: 900px) {
+      .auth-container {
+        flex-direction: column;
+        border-radius: 20px;
+        max-height: none;
+      }
+      .auth-sidebar {
+        padding: 1.5rem;
+      }
+      .auth-form-area {
+        padding: 1.5rem;
+        max-height: none;
+        overflow-y: visible;
+      }
+      .form-row, .form-row-3 {
+        grid-template-columns: 1fr;
+      }
+      .role-selector {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-container">
+    <!-- Sidebar -->
+    <div class="auth-sidebar">
+      <i class="fas fa-heartbeat"></i>
+      <h2>The Good Physio</h2>
+      <p>Where Passion meets Expertise.</p>
+    </div>
+
+    <!-- Form Area -->
+    <div class="auth-form-area">
+      <div class="auth-header">
+        <h1>Welcome</h1>
+        <p>Sign in to your account or create a new one</p>
+      </div>
+
+      <!-- Tab Buttons -->
+      <div class="tab-buttons">
+        <button class="tab-btn active" id="loginTab" onclick="switchTab('login')">Login</button>
+        <button class="tab-btn" id="registerTab" onclick="switchTab('register')">Register</button>
+      </div>
+
+      <!-- Login Form -->
+      <div class="form-container active" id="loginForm">
+        <form onsubmit="handleLogin(event)">
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" id="loginEmail" placeholder="Enter your email" required>
+          </div>
+          <div class="form-group">
+            <label>Password</label>
+            <input type="password" id="loginPassword" placeholder="Enter your password" required>
+          </div>
+          <div class="form-group">
+            <label>I am a</label>
+            <select id="loginRole" required>
+              <option value="">Select role</option>
+              <option value="patient">Patient</option>
+              <option value="doctor">Doctor</option>
+            </select>
+          </div>
+          <button type="submit" class="btn-submit">Sign In</button>
+        </form>
+        <div class="message" id="loginMessage"></div>
+
+        <!-- Demo credentials helper -->
+        <div style="margin-top: 1.5rem; padding: 1rem; background: #f9f9f9; border-radius: 10px; font-size: 0.85rem;">
+          <strong style="color: var(--maroon);">Demo Credentials:</strong><br>
+          <strong>Doctor:</strong> dr.smith@goodphysio.com / doctor123<br>
+          <strong>Doctor:</strong> dr.jones@goodphysio.com / doctor456<br>
+          <strong>Patient:</strong> maria@email.com / patient123<br>
+          <strong>Patient:</strong> david@email.com / patient456
+        </div>
+      </div>
+
+      <!-- Register Form -->
+      <div class="form-container" id="registerForm">
+        <form onsubmit="handleRegister(event)" id="registerFormElement">
+          <div class="form-group">
+            <label>I want to register as</label>
+            <div class="role-selector">
+              <div class="role-card" id="patientRoleCard" onclick="selectRole('patient')">
+                <i class="fas fa-user"></i>
+                <span>Patient</span>
+              </div>
+              <div class="role-card" id="doctorRoleCard" onclick="selectRole('doctor')">
+                <i class="fas fa-user-md"></i>
+                <span>Doctor</span>
+              </div>
+            </div>
+            <input type="hidden" id="regRole" value="">
+          </div>
+
+          <!-- Account Info -->
+          <div class="form-group">
+            <label>Email Address *</label>
+            <input type="email" id="regEmail" placeholder="Enter your email" required>
+          </div>
+          <div class="form-group">
+            <label>Password *</label>
+            <input type="password" id="regPassword" placeholder="Create a password (min 6 characters)" required minlength="6">
+          </div>
+
+          <!-- Personal Info -->
+          <div class="form-row-3">
+            <div class="form-group">
+              <label>Surname *</label>
+              <input type="text" id="regSurname" placeholder="Surname" required>
+            </div>
+            <div class="form-group">
+              <label>First Name *</label>
+              <input type="text" id="regFirstname" placeholder="First Name" required>
+            </div>
+            <div class="form-group">
+              <label>Middle Name</label>
+              <input type="text" id="regMiddlename" placeholder="Middle Name">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Age</label>
+              <input type="number" id="regAge" placeholder="Age" min="0" max="150">
+            </div>
+            <div class="form-group">
+              <label>Date of Birth</label>
+              <input type="date" id="regBirthdate">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Home Address</label>
+            <input type="text" id="regAddress" placeholder="Complete address">
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Phone Number</label>
+              <input type="tel" id="regPhone" placeholder="Phone number">
+            </div>
+            <div class="form-group">
+              <label>Sex</label>
+              <select id="regSex">
+                <option value="">Select...</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Occupation</label>
+            <input type="text" id="regOccupation" placeholder="Occupation">
+          </div>
+
+          <!-- Emergency Contact -->
+          <fieldset class="fieldset">
+            <legend>🆘 Emergency Contact</legend>
+            <div class="form-row-3">
+              <div class="form-group">
+                <label>Contact Name</label>
+                <input type="text" id="regEmergName" placeholder="Full name">
+              </div>
+              <div class="form-group">
+                <label>Phone Number</label>
+                <input type="tel" id="regEmergPhone" placeholder="Phone">
+              </div>
+              <div class="form-group">
+                <label>Relationship</label>
+                <select id="regEmergRelationship">
+                  <option value="">Select...</option>
+                  <option value="Spouse">Spouse</option>
+                  <option value="Parent">Parent</option>
+                  <option value="Child">Child</option>
+                  <option value="Sibling">Sibling</option>
+                  <option value="Friend">Friend</option>
+                  <option value="Other Relative">Other Relative</option>
+                  <option value="Guardian">Guardian</option>
+                  <option value="Partner">Partner</option>
+                </select>
+              </div>
+            </div>
+          </fieldset>
+
+          <!-- Doctor-specific fields -->
+          <div class="doctor-fields" id="doctorFields">
+            <div class="form-group">
+              <label>Specialization</label>
+              <input type="text" id="docSpecialization" placeholder="e.g., Sports Rehabilitation">
+            </div>
+            <div class="form-group">
+              <label>License Number</label>
+              <input type="text" id="docLicense" placeholder="e.g., PT-2024-12345">
+            </div>
+          </div>
+
+          <button type="submit" class="btn-submit">Create Account</button>
+        </form>
+        <div class="message" id="registerMessage"></div>
+      </div>
+
+      <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to Homepage</a>
+    </div>
+  </div>
+
+  <script>
+    // Database API calls
+    async function fetchDatabase() {
+      try {
+        const response = await fetch('/api/database');
+        return await response.json();
+      } catch (error) {
+        console.error('Failed to fetch database:', error);
+        return null;
+      }
+    }
+
+    async function saveDatabase(DB) {
+      try {
+        await fetch('/api/database', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(DB)
+        });
+      } catch (error) {
+        console.error('Failed to save database:', error);
+      }
+    }
+
+    let DB = null;
+    let selectedRole = '';
+
+    // Load database on page load
+    (async function() {
+      DB = await fetchDatabase();
+      if (!DB) {
+        // Load from localStorage as fallback
+        const stored = localStorage.getItem('physioDatabase');
+        if (stored) {
+          DB = JSON.parse(stored);
+        }
+      }
+      console.log('Database loaded:', DB ? Object.keys(DB) : 'null');
+    })();
+
+    function switchTab(tab) {
+      document.getElementById('loginTab').classList.toggle('active', tab === 'login');
+      document.getElementById('registerTab').classList.toggle('active', tab === 'register');
+      document.getElementById('loginForm').classList.toggle('active', tab === 'login');
+      document.getElementById('registerForm').classList.toggle('active', tab === 'register');
+      document.getElementById('loginMessage').style.display = 'none';
+      document.getElementById('registerMessage').style.display = 'none';
+    }
+
+    function selectRole(role) {
+      selectedRole = role;
+      document.getElementById('regRole').value = role;
+      document.querySelectorAll('.role-card').forEach(card => card.classList.remove('selected'));
+      document.getElementById(role + 'RoleCard').classList.add('selected');
+      document.getElementById('doctorFields').classList.toggle('show', role === 'doctor');
+    }
+
+    async function handleLogin(event) {
+      event.preventDefault();
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value.trim();
+      const role = document.getElementById('loginRole').value;
+      const messageEl = document.getElementById('loginMessage');
+      
+      // Reload DB if needed
+      if (!DB) {
+        DB = await fetchDatabase();
+      }
+      
+      if (!DB || !DB.users) {
+        showMessage(messageEl, 'Database not loaded. Please refresh the page.', 'error');
+        return;
+      }
+      
+      const user = DB.users.find(u => u.email === email && u.password === password && u.role === role);
+      
+      if (user) {
+        showMessage(messageEl, '✓ Login successful! Redirecting...', 'success');
+        
+        // Store user data
+        sessionStorage.setItem('physioLoggedInUser', JSON.stringify(user));
+        console.log('User saved to session:', user.id, user.name);
+        
+        // Save database to localStorage as backup
+        localStorage.setItem('physioDatabase', JSON.stringify(DB));
+        
+        // Redirect to dashboard
+        setTimeout(() => { 
+          window.location.href = 'dashboard.html';
+        }, 500);
+      } else {
+        showMessage(messageEl, '❌ Invalid credentials or role. Please try again.', 'error');
+      }
+    }
+
+    async function handleRegister(event) {
+      event.preventDefault();
+      const role = document.getElementById('regRole').value;
+      const email = document.getElementById('regEmail').value.trim();
+      const password = document.getElementById('regPassword').value.trim();
+      const messageEl = document.getElementById('registerMessage');
+      
+      if (!role) { showMessage(messageEl, 'Please select a role.', 'error'); return; }
+      
+      if (!DB) {
+        DB = await fetchDatabase();
+      }
+      
+      if (!DB || !DB.users) {
+        showMessage(messageEl, 'Database not loaded. Please refresh.', 'error');
+        return;
+      }
+      
+      if (DB.users.find(u => u.email === email && email !== '')) {
+        showMessage(messageEl, 'An account with this email already exists.', 'error');
+        return;
+      }
+      
+      const prefix = role === 'doctor' ? 'DOC' : 'PAT';
+      const idNumber = String(DB.users.filter(u => u.role === role).length + 1).padStart(3, '0');
+      
+      const newUser = {
+        id: prefix + idNumber,
+        email, password, role,
+        surname: document.getElementById('regSurname').value.trim(),
+        firstname: document.getElementById('regFirstname').value.trim(),
+        middlename: document.getElementById('regMiddlename').value.trim(),
+        age: document.getElementById('regAge').value,
+        birthdate: document.getElementById('regBirthdate').value,
+        address: document.getElementById('regAddress').value.trim(),
+        phone: document.getElementById('regPhone').value.trim(),
+        sex: document.getElementById('regSex').value,
+        occupation: document.getElementById('regOccupation').value.trim(),
+        emergencyContact: {
+          name: document.getElementById('regEmergName').value.trim(),
+          phone: document.getElementById('regEmergPhone').value.trim(),
+          relationship: document.getElementById('regEmergRelationship').value
+        },
+        medicalHistory: [],
+        created: new Date().toISOString().split('T')[0]
+      };
+      
+      newUser.name = [newUser.firstname, newUser.middlename, newUser.surname].filter(Boolean).join(' ');
+      
+      if (role === 'doctor') {
+        newUser.specialization = document.getElementById('docSpecialization').value.trim();
+        newUser.license = document.getElementById('docLicense').value.trim();
+      }
+      
+      DB.users.push(newUser);
+      await saveDatabase(DB);
+      
+      // Also save to localStorage
+      localStorage.setItem('physioDatabase', JSON.stringify(DB));
+      
+      showMessage(messageEl, '✓ Account created! Redirecting to login...', 'success');
+      event.target.reset();
+      document.querySelectorAll('.role-card').forEach(card => card.classList.remove('selected'));
+      document.getElementById('doctorFields').classList.remove('show');
+      selectedRole = '';
+      
+      setTimeout(() => { switchTab('login'); }, 1500);
+    }
+
+    function showMessage(element, text, type) {
+      element.textContent = text;
+      element.className = 'message ' + type;
+      element.style.display = 'block';
+      setTimeout(() => { element.style.display = 'none'; }, 4000);
+    }
+  </script>
+</body>
+</html>
